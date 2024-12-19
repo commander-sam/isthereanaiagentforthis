@@ -28,12 +28,22 @@ export default function AdminLoginPage() {
 
     try {
       if (mode === 'signup') {
-        const { error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
+          options: {
+            emailRedirectTo: window.location.origin
+          }
         });
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+          console.error('Signup error:', signUpError);
+          throw signUpError;
+        }
+
+        if (!data.user) {
+          throw new Error('No user data returned');
+        }
 
         // After successful signup, try to sign in
         await signIn(email, password);
@@ -42,9 +52,10 @@ export default function AdminLoginPage() {
         await signIn(email, password);
         navigate(from, { replace: true });
       }
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Auth error:', err);
       setError(mode === 'signup' 
-        ? 'Failed to create account. Please try again.' 
+        ? `Failed to create account: ${err.message || 'Please try again'}` 
         : 'Failed to sign in. Please check your credentials.');
     } finally {
       setIsLoading(false);
@@ -98,7 +109,11 @@ export default function AdminLoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
+                  minLength={6}
                 />
+                <p className="mt-1 text-sm text-gray-400">
+                  Password must be at least 6 characters long
+                </p>
               </div>
 
               <button
