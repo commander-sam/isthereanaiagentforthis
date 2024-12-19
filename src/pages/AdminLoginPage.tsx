@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Shield, AlertCircle } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from '../lib/supabase';
+import AuthForm from '../components/auth/AuthForm';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
@@ -32,7 +28,7 @@ export default function AdminLoginPage() {
           email,
           password,
           options: {
-            emailRedirectTo: window.location.origin
+            emailRedirectTo: `${window.location.origin}/admin`
           }
         });
 
@@ -78,66 +74,17 @@ export default function AdminLoginPage() {
               {mode === 'login' ? 'Admin Login' : 'Create Admin Account'}
             </h2>
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-900/50 border border-red-500/20 rounded-lg flex items-start">
-                <AlertCircle className="h-5 w-5 text-red-400 mr-2 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-400">{error}</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-900/50 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                  minLength={6}
-                />
-                <p className="mt-1 text-sm text-gray-400">
-                  Password must be at least 6 characters long
-                </p>
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-              >
-                {isLoading 
-                  ? (mode === 'login' ? 'Signing in...' : 'Creating account...') 
-                  : (mode === 'login' ? 'Sign In' : 'Create Account')}
-              </button>
-
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
-                >
-                  {mode === 'login' 
-                    ? "Don't have an account? Create one" 
-                    : 'Already have an account? Sign in'}
-                </button>
-              </div>
-            </form>
+            <AuthForm
+              mode={mode}
+              email={email}
+              password={password}
+              error={error}
+              isLoading={isLoading}
+              onEmailChange={setEmail}
+              onPasswordChange={setPassword}
+              onSubmit={handleSubmit}
+              onModeChange={() => setMode(mode === 'login' ? 'signup' : 'login')}
+            />
           </div>
         </div>
       </div>
