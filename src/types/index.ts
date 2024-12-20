@@ -11,4 +11,5 @@ export interface Tool {
   featured?: boolean;
   status: ToolStatus;
   submittedAt: string;
+  githubUrl?: string;
 }

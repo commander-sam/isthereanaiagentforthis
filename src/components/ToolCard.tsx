@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Star } from 'lucide-react';
 import { Tool } from '../types';
 
 interface ToolCardProps {
@@ -11,17 +11,36 @@ export default function ToolCard({ tool }: ToolCardProps) {
   return (
     <div className="group relative">
       {/* Glow effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-500"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl opacity-20 group-hover:opacity-100 transition-all duration-500 blur"></div>
       
-      <div className="relative bg-gray-900 rounded-xl overflow-hidden border border-white/10 backdrop-blur-xl transition-all duration-500 group-hover:scale-[1.02] group-hover:border-white/20">
+      {/* Card content */}
+      <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-xl overflow-hidden border border-white/10 transition-all duration-500 group-hover:scale-[1.02] group-hover:border-white/20">
         <Link to={`/tool/${tool.id}`}>
-          <div className="relative h-48 overflow-hidden">
+          <div className="relative h-48">
+            {/* Image overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 mix-blend-overlay"></div>
+            
+            {/* Tool image */}
             <img
               src={tool.imageUrl}
               alt={tool.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+            
+            {/* Gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent"></div>
+            
+            {/* Featured badge */}
+            {tool.featured && (
+              <div className="absolute top-4 right-4">
+                <div className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 backdrop-blur-sm">
+                  <div className="flex items-center space-x-1">
+                    <Star className="w-3 h-3 text-blue-400" />
+                    <span className="text-xs font-medium text-blue-400">Featured</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </Link>
         
@@ -32,13 +51,17 @@ export default function ToolCard({ tool }: ToolCardProps) {
             </h3>
           </Link>
           
-          <p className="text-gray-400 mb-4 line-clamp-2">{tool.shortDescription}</p>
+          <p className="text-gray-400 mb-4 line-clamp-2">
+            {tool.shortDescription}
+          </p>
           
           <div className="flex justify-between items-center">
+            {/* Category badge */}
             <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
               {tool.category}
             </span>
             
+            {/* Visit link */}
             <a
               href={tool.url}
               target="_blank"

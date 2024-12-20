@@ -7,12 +7,15 @@ interface ToolContentProps {
 
 export default function ToolContent({ tool }: ToolContentProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">About {tool.name}</h2>
-      <div 
-        className="prose prose-blue dark:prose-invert max-w-none"
-        dangerouslySetInnerHTML={{ __html: tool.description }}
-      />
+    <div className="relative">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-20 blur"></div>
+      <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-lg border border-white/10 p-8">
+        <h2 className="text-2xl font-bold text-white mb-6">About {tool.name}</h2>
+        <div 
+          className="prose prose-invert prose-blue max-w-none"
+          dangerouslySetInnerHTML={{ __html: tool.description }}
+        />
+      </div>
     </div>
   );
 }
