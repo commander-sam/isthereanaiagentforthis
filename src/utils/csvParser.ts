@@ -15,17 +15,49 @@ const headerMappings: Record<string, string[]> = {
   websiteUrl: ['websiteurl', 'website', 'url', 'link']
 };
 
+// Parse a CSV line respecting quotes
+const parseCSVLine = (line: string): string[] => {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      // Handle escaped quotes (two double quotes in a row)
+      if (i + 1 < line.length && line[i + 1] === '"') {
+        current += '"';
+        i++; // Skip the next quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      // End of field
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  // Add the last field
+  result.push(current.trim());
+  return result;
+};
+
 export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
   try {
     const text = await file.text();
-    const lines = text.split('\n');
+    // Split by newlines but handle both \n and \r\n
+    const lines = text.split(/\r?\n/);
     
     if (lines.length < 2) {
       throw new Error('CSV file must contain at least a header row and one data row');
     }
     
-    // Get and normalize headers
-    const headers = lines[0].split(',').map(h => normalizeHeader(h.trim()));
+    // Parse and normalize headers
+    const headers = parseCSVLine(lines[0]).map(h => normalizeHeader(h.trim()));
     
     // Map headers to standardized field names
     const columnMap = new Map<string, number>();
@@ -49,7 +81,7 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     return lines.slice(1)
       .filter(line => line.trim())
       .map(line => {
-        const values = line.split(',').map(v => v.trim());
+        const values = parseCSVLine(line);
         
         return {
           name: values[columnMap.get('name')!] || '',
