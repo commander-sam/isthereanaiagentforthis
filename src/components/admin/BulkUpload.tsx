@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Upload, AlertCircle } from 'lucide-react';
 import { parseCsvFile } from '../../utils/csvParser';
-import { ToolFormData } from '../../types/admin';
-import { validateToolForm } from '../../utils/validation';
+import { AgentFormData } from '../../types/admin';
+import { validateAgentForm } from '../../utils/validation';
 import BulkUploadInfo from './bulk-upload/BulkUploadInfo';
 import BulkUploadPreview from './bulk-upload/BulkUploadPreview';
 
 interface BulkUploadProps {
-  onUpload: (tools: ToolFormData[]) => void;
+  onUpload: (agents: AgentFormData[]) => void;
   onClose: () => void;
 }
 
 export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
-  const [preview, setPreview] = useState<ToolFormData[]>([]);
+  const [preview, setPreview] = useState<AgentFormData[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,8 +30,8 @@ export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
     setError('');
     
     try {
-      const tools = await parseCsvFile(selectedFile);
-      setPreview(tools);
+      const agents = await parseCsvFile(selectedFile);
+      setPreview(agents);
     } catch (err) {
       setError('Error parsing CSV file. Please check the format.');
     }
@@ -43,8 +43,8 @@ export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
     setIsProcessing(true);
     const errors: string[] = [];
     
-    preview.forEach((tool, index) => {
-      const validationErrors = validateToolForm(tool);
+    preview.forEach((agent, index) => {
+      const validationErrors = validateAgentForm(agent);
       if (Object.keys(validationErrors).length > 0) {
         errors.push(`Row ${index + 1}: ${Object.values(validationErrors).join(', ')}`);
       }
@@ -64,7 +64,7 @@ export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
     <div className="relative">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl blur"></div>
       <div className="relative bg-gray-900/50 backdrop-blur-xl p-6 rounded-lg border border-white/10">
-        <h2 className="text-xl font-medium text-white mb-4">Bulk Upload Tools</h2>
+        <h2 className="text-xl font-medium text-white mb-4">Bulk Upload Agents</h2>
         
         <BulkUploadInfo />
 
@@ -95,7 +95,7 @@ export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
           </div>
         )}
 
-        <BulkUploadPreview tools={preview} />
+        <BulkUploadPreview agents={preview} />
 
         <div className="flex justify-end space-x-4">
           <button

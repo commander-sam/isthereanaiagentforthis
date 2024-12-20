@@ -1,8 +1,9 @@
-import { ToolFormData, ToolFormErrors } from '../types/admin';
+import { AgentFormData, AgentFormErrors } from '../types/admin';
 
-export const validateToolForm = (data: ToolFormData): ToolFormErrors => {
-  const errors: ToolFormErrors = {};
+export const validateAgentForm = (data: AgentFormData): AgentFormErrors => {
+  const errors: AgentFormErrors = {};
 
+  // Required fields validation
   if (!data.name?.trim()) {
     errors.name = 'Name is required';
   }
@@ -23,10 +24,11 @@ export const validateToolForm = (data: ToolFormData): ToolFormErrors => {
     errors.websiteUrl = 'Invalid URL format';
   }
 
-  // Validate optional URLs if provided
+  // Optional URL validations
   const urlFields = ['githubUrl', 'twitterUrl', 'facebookUrl', 'linkedinUrl', 'discordUrl'];
   urlFields.forEach(field => {
-    if (data[field as keyof ToolFormData]?.trim() && !isValidUrl(data[field as keyof ToolFormData] as string)) {
+    const value = data[field as keyof AgentFormData];
+    if (value && typeof value === 'string' && value.trim() && !isValidUrl(value)) {
       errors[field] = 'Invalid URL format';
     }
   });
@@ -46,3 +48,6 @@ const isValidUrl = (url: string): boolean => {
     return false;
   }
 };
+
+// For backward compatibility
+export const validateToolForm = validateAgentForm;

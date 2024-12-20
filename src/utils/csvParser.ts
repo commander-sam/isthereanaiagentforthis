@@ -1,6 +1,6 @@
-import { ToolFormData } from '../types/admin';
+import { AgentFormData } from '../types/admin';
 
-export const parseCsvFile = async (file: File): Promise<ToolFormData[]> => {
+export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
   const text = await file.text();
   const lines = text.split('\n');
   const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
@@ -9,7 +9,7 @@ export const parseCsvFile = async (file: File): Promise<ToolFormData[]> => {
     .filter(line => line.trim())
     .map(line => {
       const values = line.split(',').map(value => value.trim());
-      const tool: ToolFormData = {
+      const agent: AgentFormData = {
         name: '',
         shortDescription: '',
         logo: null,
@@ -25,11 +25,11 @@ export const parseCsvFile = async (file: File): Promise<ToolFormData[]> => {
       };
       
       headers.forEach((header, index) => {
-        if (header in tool) {
-          tool[header as keyof ToolFormData] = values[index] as string;
+        if (values[index] && header in agent) {
+          (agent as any)[header] = values[index];
         }
       });
       
-      return tool;
+      return agent;
     });
 };
