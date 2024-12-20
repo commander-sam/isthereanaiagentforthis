@@ -1,33 +1,32 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 import { Category } from '../../../types';
+import GradientCard from '../../../components/common/GradientCard';
 
 interface CategoryCardProps {
   category: Category;
-  toolCount: number;
+  agentCount: number;
 }
 
-export default function CategoryCard({ category, toolCount }: CategoryCardProps) {
+export default function CategoryCard({ category, agentCount }: CategoryCardProps) {
   const Icon = Icons[category.icon as keyof typeof Icons];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow">
+    <GradientCard className="group-hover:scale-[1.02] transition-transform duration-300">
       <div className="flex items-center mb-4">
-        {Icon && (
-          <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-            <Icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-          </div>
-        )}
+        <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
+          <Icon className="h-8 w-8 text-blue-400" />
+        </div>
         <div className="ml-4">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-xl font-semibold text-white group-hover:text-blue-400 transition-colors">
             {category.name}
           </h3>
-          <p className="text-sm text-blue-600 dark:text-blue-400">
-            {toolCount} {toolCount === 1 ? 'tool' : 'tools'}
+          <p className="text-sm text-blue-400">
+            {agentCount} {agentCount === 1 ? 'agent' : 'agents'}
           </p>
         </div>
       </div>
-      <p className="text-gray-600 dark:text-gray-300">{category.description}</p>
-    </div>
+      <p className="text-gray-400">{category.description}</p>
+    </GradientCard>
   );
 }
