@@ -12,7 +12,7 @@ export default function ToolSidebar({ tool }: ToolSidebarProps) {
       {/* Links Section */}
       <div className="relative">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-20 blur"></div>
-        <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-lg border border-white/10 p-6">
+        <div className="relative bg-white/5 backdrop-blur-xl rounded-lg border border-white/10 p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Links</h3>
           <div className="space-y-3">
             <a 
@@ -42,7 +42,7 @@ export default function ToolSidebar({ tool }: ToolSidebarProps) {
       {/* Details Section */}
       <div className="relative">
         <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl opacity-20 blur"></div>
-        <div className="relative bg-gray-900/80 backdrop-blur-xl rounded-lg border border-white/10 p-6">
+        <div className="relative bg-white/5 backdrop-blur-xl rounded-lg border border-white/10 p-6">
           <h3 className="text-lg font-semibold text-white mb-4">Details</h3>
           <dl className="space-y-3">
             <div>

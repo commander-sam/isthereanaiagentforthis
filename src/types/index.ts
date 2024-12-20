@@ -1,6 +1,6 @@
-export type ToolStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+export type AgentStatus = 'draft' | 'pending' | 'approved' | 'rejected';
 
-export interface Tool {
+export interface Agent {
   id: string;
   name: string;
   description: string;
@@ -9,7 +9,14 @@ export interface Tool {
   category: string;
   url: string;
   featured?: boolean;
-  status: ToolStatus;
+  status: AgentStatus;
   submittedAt: string;
   githubUrl?: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
 }

@@ -9,10 +9,7 @@ interface ToolHeaderProps {
 
 export default function ToolHeader({ tool }: ToolHeaderProps) {
   return (
-    <div className="relative overflow-hidden">
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 opacity-90 animate-gradient-x"></div>
-      
+    <div className="relative bg-gradient-to-br from-blue-600 via-purple-600 to-blue-600">
       {/* Geometric patterns */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjAgMjBMNDAgMjBMNDAgNDBMMjAgNDBMMjAgMjBaTTAgMjBMMjAgMjBMMjAgNDBMMCA0MEwwIDIwWk0yMCAwTDQwIDBMNDAgMjBMMjAgMjBMMjAgMFpNMCAwTDIwIDBMMjAgMjBMMCAyMEwwIDBaIiBmaWxsPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuMDUpIi8+PC9zdmc+')] opacity-20"></div>
 
@@ -34,12 +31,9 @@ export default function ToolHeader({ tool }: ToolHeaderProps) {
           <div className="flex-1 text-center md:text-left">
             <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
               <h1 className="text-4xl font-bold text-white">{tool.name}</h1>
-              {tool.featured && (
-                <span className="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-500/30 backdrop-blur-sm flex items-center gap-1">
-                  <Star className="w-4 h-4 text-blue-400" />
-                  <span className="text-sm font-medium text-blue-400">Featured</span>
-                </span>
-              )}
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-white/10 backdrop-blur-sm border border-white/20 text-white">
+                {tool.category}
+              </span>
             </div>
             <p className="text-xl text-blue-100 mb-8">{tool.shortDescription}</p>
             
@@ -48,12 +42,34 @@ export default function ToolHeader({ tool }: ToolHeaderProps) {
                 href={tool.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white hover:from-blue-600 hover:to-purple-600 transition-all flex items-center gap-2"
+                className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all flex items-center gap-2"
               >
                 <ExternalLink className="h-5 w-5" />
                 Visit Website
               </a>
               <ShareButton url={window.location.href} title={tool.name} />
+              <button className="px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all flex items-center gap-2">
+                <Star className="h-5 w-5" />
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+            <div className="flex items-center text-white">
+              <span>50k+ Monthly Users</span>
+            </div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+            <div className="flex items-center text-white">
+              <span>Updated 2 days ago</span>
+            </div>
+          </div>
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-4">
+            <div className="flex items-center text-white">
+              <span>Featured Tool</span>
             </div>
           </div>
         </div>
