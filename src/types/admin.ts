@@ -1,9 +1,12 @@
+import { AgentPricing, AgentSource, AgentStatus } from './enums';
+
 export interface AgentFormData {
   name: string;
   shortDescription: string;
+  description: string;
   logo: File | null;
-  source: 'open_source' | 'closed_source';
-  pricing: 'free' | 'freemium' | 'paid';
+  source: AgentSource;
+  pricing: AgentPricing;
   contactEmail: string;
   websiteUrl: string;
   githubUrl?: string;
@@ -11,6 +14,10 @@ export interface AgentFormData {
   facebookUrl?: string;
   linkedinUrl?: string;
   discordUrl?: string;
+  category?: string;
+  featured?: boolean;
+  imageUrl?: string;
+  status?: AgentStatus;
 }
 
 export interface AgentFormErrors {

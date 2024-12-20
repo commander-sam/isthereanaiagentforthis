@@ -5,9 +5,25 @@ import AllAgents from '../components/sections/AllAgents';
 import CategoriesSection from '../components/sections/CategoriesSection';
 import { categories } from '../data/categories';
 import { useAgents } from '../hooks/useAgents';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage';
 
 export default function HomePage() {
-  const agents = useAgents();
+  const { agents, isLoading, error } = useAgents();
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        title="Error Loading Agents"
+        message={error}
+      />
+    );
+  }
+
   const featuredAgents = agents.filter(agent => agent.featured);
 
   return (

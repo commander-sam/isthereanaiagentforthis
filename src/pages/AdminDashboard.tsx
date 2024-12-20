@@ -8,67 +8,72 @@ import BulkUpload from '../components/admin/BulkUpload';
 import { Plus, Upload } from 'lucide-react';
 import ActionButton from '../components/common/ActionButton';
 import PageTitle from '../components/common/PageTitle';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import ErrorMessage from '../components/common/ErrorMessage';
+import { useAdminAgents } from '../hooks/useAdminAgents';
 
 export default function AdminDashboard() {
-  const [agents, setAgents] = useState<Agent[]>(agentsManager.getAllAgentsForAdmin());
+  const { agents, isLoading, error } = useAdminAgents();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
   const [editingAgent, setEditingAgent] = useState<Agent | undefined>();
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 
-  const handleAddAgent = (formData: AgentFormData) => {
-    const newAgent = agentsManager.addAgent(formData);
-    setAgents(agentsManager.getAllAgentsForAdmin());
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        title="Error Loading Agents"
+        message={error}
+      />
+    );
+  }
+
+  const handleAddAgent = async (formData: AgentFormData) => {
+    const newAgent = await agentsManager.addAgent(formData);
     setIsFormOpen(false);
   };
 
-  const handleUpdateAgent = (formData: AgentFormData & { status?: AgentStatus }) => {
+  const handleUpdateAgent = async (formData: AgentFormData & { status?: AgentStatus }) => {
     if (editingAgent) {
-      const updatedAgent = agentsManager.updateAgent(editingAgent.id, formData);
+      const updatedAgent = await agentsManager.updateAgent(editingAgent.id, formData);
       if (updatedAgent) {
-        setAgents(agentsManager.getAllAgentsForAdmin());
         setEditingAgent(undefined);
         setIsFormOpen(false);
       }
     }
   };
 
-  const handleDeleteAgent = (id: string) => {
+  const handleDeleteAgent = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this agent?')) {
-      agentsManager.deleteAgent(id);
-      setAgents(agentsManager.getAllAgentsForAdmin());
+      await agentsManager.deleteAgent(id);
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedAgents.length === 0) return;
     
     if (window.confirm(`Are you sure you want to delete ${selectedAgents.length} agents?`)) {
-      agentsManager.bulkDelete(selectedAgents);
-      setAgents(agentsManager.getAllAgentsForAdmin());
+      await agentsManager.bulkDelete(selectedAgents);
       setSelectedAgents([]);
     }
   };
 
-  const handleStatusChange = (id: string, status: AgentStatus) => {
-    const updated = agentsManager.updateAgentStatus(id, status);
-    if (updated) {
-      setAgents(agentsManager.getAllAgentsForAdmin());
-    }
+  const handleStatusChange = async (id: string, status: AgentStatus) => {
+    await agentsManager.updateAgentStatus(id, status);
   };
 
-  const handleToggleFeatured = (id: string) => {
-    const updated = agentsManager.toggleFeatured(id);
-    if (updated) {
-      setAgents(agentsManager.getAllAgentsForAdmin());
-    }
+  const handleToggleFeatured = async (id: string) => {
+    await agentsManager.toggleFeatured(id);
   };
 
-  const handleBulkUpload = (agentsData: AgentFormData[]) => {
-    agentsData.forEach(agent => {
-      agentsManager.addAgent(agent);
-    });
-    setAgents(agentsManager.getAllAgentsForAdmin());
+  const handleBulkUpload = async (agentsData: AgentFormData[]) => {
+    for (const agent of agentsData) {
+      await agentsManager.addAgent(agent);
+    }
     setIsBulkUploadOpen(false);
   };
 

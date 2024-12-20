@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Agent } from '../types';
 import { agentsManager } from '../utils/agentsManager';
 
-export function useAgents() {
+export function useAdminAgents() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -10,7 +10,7 @@ export function useAgents() {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const data = await agentsManager.getAllAgents();
+        const data = await agentsManager.getAllAgentsForAdmin();
         setAgents(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch agents');
@@ -21,7 +21,6 @@ export function useAgents() {
 
     fetchAgents();
 
-    // Subscribe to updates
     const unsubscribe = agentsManager.subscribe(() => {
       fetchAgents();
     });

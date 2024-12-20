@@ -1,4 +1,4 @@
-export type AgentStatus = 'draft' | 'pending' | 'approved' | 'rejected';
+import { AgentPricing, AgentSource, AgentStatus } from './enums';
 
 export interface Agent {
   id: string;
@@ -10,13 +10,11 @@ export interface Agent {
   url: string;
   featured?: boolean;
   status: AgentStatus;
+  pricing: AgentPricing;
+  source: AgentSource;
   submittedAt: string;
   githubUrl?: string;
 }
 
-export interface Category {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-}
+// Re-export enum types for convenience
+export type { AgentPricing, AgentSource, AgentStatus };
