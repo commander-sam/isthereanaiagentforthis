@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Hero() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/tools?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div className="relative overflow-hidden">
       {/* Animated background gradient */}
@@ -12,25 +23,28 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10">
         <div className="text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-blue-400 animate-text-gradient">
-            Discover the Future of AI
-          </h1>
-          <p className="text-xl md:text-2xl mb-12 text-blue-100 max-w-3xl mx-auto">
-            Explore cutting-edge AI tools and agents reshaping the digital landscape
-          </p>
-          
-          <div className="max-w-2xl mx-auto relative">
+          <div className="max-w-4xl mx-auto relative">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-xl opacity-30"></div>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search AI tools..."
-                className="w-full px-8 py-5 rounded-full text-lg bg-white/10 backdrop-blur-xl border border-white/20 text-white placeholder-blue-200/70 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-              />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full hover:from-blue-600 hover:to-purple-600 transition-all group">
+            <form onSubmit={handleSearch} className="relative flex items-center">
+              <span className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-blue-100 whitespace-nowrap mr-4">
+                Is there an AI agent for
+              </span>
+              <div className="flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="writing blog posts..."
+                  className="w-full px-6 py-4 text-xl md:text-2xl bg-white/10 backdrop-blur-xl border-2 border-white/20 rounded-full text-white placeholder-blue-200/70 focus:outline-none focus:border-white/40 transition-all"
+                />
+              </div>
+              <button 
+                type="submit"
+                className="ml-4 p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full hover:from-blue-600 hover:to-purple-600 transition-all group"
+              >
                 <Search className="h-6 w-6 text-white group-hover:scale-110 transition-transform" />
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
