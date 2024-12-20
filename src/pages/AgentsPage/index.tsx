@@ -2,9 +2,24 @@ import React from 'react';
 import { useAgents } from '../../hooks/useAgents';
 import AllAgents from '../../components/sections/AllAgents';
 import PageTitle from '../../components/common/PageTitle';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import ErrorMessage from '../../components/common/ErrorMessage';
 
 export default function AgentsPage() {
-  const agents = useAgents();
+  const { agents, isLoading, error } = useAgents();
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        title="Error Loading Agents"
+        message={error}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 py-12">

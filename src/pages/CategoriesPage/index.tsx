@@ -4,9 +4,24 @@ import { categories } from '../../data/categories';
 import { useAgents } from '../../hooks/useAgents';
 import CategoryCard from './components/CategoryCard';
 import PageTitle from '../../components/common/PageTitle';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import ErrorMessage from '../../components/common/ErrorMessage';
 
 export default function CategoriesPage() {
-  const agents = useAgents();
+  const { agents, isLoading, error } = useAgents();
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage 
+        title="Error Loading Categories"
+        message={error}
+      />
+    );
+  }
 
   const getCategoryAgentCount = (categoryId: string) => {
     return agents.filter(agent => agent.category === categoryId).length;
