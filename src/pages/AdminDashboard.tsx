@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Agent, AgentStatus } from '../types';
 import { AgentFormData } from '../types/admin';
 import { agentsManager } from '../utils/agentsManager';
-import AdminToolForm from '../components/admin/form/AdminToolForm';
-import ToolsList from '../components/admin/ToolsList';
+import AdminAgentForm from '../components/admin/form/AdminAgentForm';
+import AgentsList from '../components/admin/AgentsList';
 import BulkUpload from '../components/admin/BulkUpload';
-import { Plus, Upload, Trash2 } from 'lucide-react';
+import { Plus, Upload } from 'lucide-react';
 import ActionButton from '../components/common/ActionButton';
+import PageTitle from '../components/common/PageTitle';
 
 export default function AdminDashboard() {
   const [agents, setAgents] = useState<Agent[]>(agentsManager.getAllAgentsForAdmin());
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
     setIsFormOpen(false);
   };
 
-  const handleUpdateAgent = (formData: AgentFormData) => {
+  const handleUpdateAgent = (formData: AgentFormData & { status?: AgentStatus }) => {
     if (editingAgent) {
       const updatedAgent = agentsManager.updateAgent(editingAgent.id, formData);
       if (updatedAgent) {
@@ -34,7 +35,7 @@ export default function AdminDashboard() {
 
   const handleDeleteAgent = (id: string) => {
     if (window.confirm('Are you sure you want to delete this agent?')) {
-      agentsManager.bulkDelete([id]);
+      agentsManager.deleteAgent(id);
       setAgents(agentsManager.getAllAgentsForAdmin());
     }
   };
@@ -49,13 +50,15 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleEdit = (agent: Agent) => {
-    setEditingAgent(agent);
-    setIsFormOpen(true);
-  };
-
   const handleStatusChange = (id: string, status: AgentStatus) => {
     const updated = agentsManager.updateAgentStatus(id, status);
+    if (updated) {
+      setAgents(agentsManager.getAllAgentsForAdmin());
+    }
+  };
+
+  const handleToggleFeatured = (id: string) => {
+    const updated = agentsManager.toggleFeatured(id);
     if (updated) {
       setAgents(agentsManager.getAllAgentsForAdmin());
     }
@@ -69,32 +72,21 @@ export default function AdminDashboard() {
     setIsBulkUploadOpen(false);
   };
 
-  const handleToggleFeatured = (id: string) => {
-    const updated = agentsManager.toggleFeatured(id);
-    if (updated) {
-      setAgents(agentsManager.getAllAgentsForAdmin());
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-white">Manage Agents</h1>
-          <div className="flex space-x-4">
-            {selectedAgents.length > 0 && (
-              <ActionButton
-                icon={Trash2}
-                label={`Delete Selected (${selectedAgents.length})`}
-                onClick={handleBulkDelete}
-                className="bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"
-              />
-            )}
+        <div className="mb-8">
+          <PageTitle 
+            title="Manage AI Agents"
+            subtitle="Add, edit, and manage your AI agent listings"
+          />
+          
+          <div className="flex flex-wrap gap-4 mt-6">
             <ActionButton
               icon={Upload}
               label="Bulk Upload"
               onClick={() => setIsBulkUploadOpen(true)}
-              className="bg-green-500/10 hover:bg-green-500/20 text-green-400 hover:text-green-300"
+              className="bg-green-600 hover:bg-green-700 border-none"
             />
             <ActionButton
               icon={Plus}
@@ -103,8 +95,16 @@ export default function AdminDashboard() {
                 setEditingAgent(undefined);
                 setIsFormOpen(true);
               }}
-              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300"
+              className="bg-blue-600 hover:bg-blue-700 border-none"
             />
+            {selectedAgents.length > 0 && (
+              <ActionButton
+                icon={Upload}
+                label={`Delete Selected (${selectedAgents.length})`}
+                onClick={handleBulkDelete}
+                className="bg-red-600 hover:bg-red-700 border-none"
+              />
+            )}
           </div>
         </div>
 
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
             onClose={() => setIsBulkUploadOpen(false)}
           />
         ) : isFormOpen ? (
-          <AdminToolForm
+          <AdminAgentForm
             initialData={editingAgent}
             onSubmit={editingAgent ? handleUpdateAgent : handleAddAgent}
             onCancel={() => {
@@ -123,9 +123,12 @@ export default function AdminDashboard() {
             }}
           />
         ) : (
-          <ToolsList
+          <AgentsList
             agents={agents}
-            onEdit={handleEdit}
+            onEdit={(agent) => {
+              setEditingAgent(agent);
+              setIsFormOpen(true);
+            }}
             onDelete={handleDeleteAgent}
             onStatusChange={handleStatusChange}
             onToggleFeatured={handleToggleFeatured}
