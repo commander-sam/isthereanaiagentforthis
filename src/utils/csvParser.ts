@@ -1,5 +1,33 @@
 import { AgentFormData } from '../types/admin';
 
+// Parse a CSV line respecting quotes
+const parseCSVLine = (line: string): string[] => {
+  const result: string[] = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      if (i + 1 < line.length && line[i + 1] === '"') {
+        current += '"';
+        i++; // Skip the next quote
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  result.push(current.trim());
+  return result;
+};
+
 // Normalize header text for comparison
 const normalizeHeader = (header: string): string => {
   return header.toLowerCase().replace(/[^a-z]/g, '');
@@ -12,38 +40,12 @@ const headerMappings: Record<string, string[]> = {
   source: ['source', 'sourcetype', 'type'],
   pricing: ['pricing', 'price', 'pricingmodel', 'cost'],
   contactEmail: ['contactemail', 'email', 'contact'],
-  websiteUrl: ['websiteurl', 'website', 'url', 'link']
-};
-
-// Parse a CSV line respecting quotes
-const parseCSVLine = (line: string): string[] => {
-  const result: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    
-    if (char === '"') {
-      // Handle escaped quotes (two double quotes in a row)
-      if (i + 1 < line.length && line[i + 1] === '"') {
-        current += '"';
-        i++; // Skip the next quote
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === ',' && !inQuotes) {
-      // End of field
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  
-  // Add the last field
-  result.push(current.trim());
-  return result;
+  websiteUrl: ['websiteurl', 'website', 'url', 'link'],
+  githubUrl: ['githuburl', 'github'],
+  twitterUrl: ['twitterurl', 'twitter'],
+  facebookUrl: ['facebookurl', 'facebook'],
+  linkedinUrl: ['linkedinurl', 'linkedin'],
+  discordUrl: ['discordurl', 'discord']
 };
 
 export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
@@ -82,16 +84,31 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
       .filter(line => line.trim())
       .map(line => {
         const values = parseCSVLine(line);
-        
-        return {
-          name: values[columnMap.get('name')!] || '',
-          shortDescription: values[columnMap.get('shortDescription')!] || '',
+        const agent: AgentFormData = {
+          name: '',
+          shortDescription: '',
           logo: null,
-          source: values[columnMap.get('source')!]?.toLowerCase() === 'open_source' ? 'open_source' : 'closed_source',
-          pricing: (values[columnMap.get('pricing')!]?.toLowerCase() || 'free') as 'free' | 'freemium' | 'paid',
-          contactEmail: values[columnMap.get('contactEmail')!] || '',
-          websiteUrl: values[columnMap.get('websiteUrl')!] || '',
+          source: 'closed_source',
+          pricing: 'free',
+          contactEmail: '',
+          websiteUrl: '',
+          githubUrl: '',
+          twitterUrl: '',
+          facebookUrl: '',
+          linkedinUrl: '',
+          discordUrl: ''
         };
+        
+        // Map values to fields
+        for (const [field, index] of columnMap.entries()) {
+          if (values[index]) {
+            // Remove surrounding quotes if they exist
+            const value = values[index].replace(/^"|"$/g, '');
+            (agent as any)[field] = value;
+          }
+        }
+        
+        return agent;
       });
   } catch (error) {
     if (error instanceof Error) {

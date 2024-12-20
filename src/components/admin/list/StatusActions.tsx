@@ -1,10 +1,11 @@
 import React from 'react';
 import { Check, X } from 'lucide-react';
-import { ToolStatus } from '../../../types';
+import { AgentStatus } from '../../../types';
+import ActionButton from '../../common/ActionButton';
 
 interface StatusActionsProps {
-  status: ToolStatus;
-  onStatusChange: (status: ToolStatus) => void;
+  status: AgentStatus;
+  onStatusChange: (status: AgentStatus) => void;
 }
 
 export default function StatusActions({ status, onStatusChange }: StatusActionsProps) {
@@ -14,20 +15,18 @@ export default function StatusActions({ status, onStatusChange }: StatusActionsP
 
   return (
     <>
-      <button
+      <ActionButton
+        icon={Check}
+        label="Approve"
         onClick={() => onStatusChange('approved')}
-        className="p-1 text-green-400 hover:text-green-300 transition-colors"
-        title="Approve"
-      >
-        <Check className="h-5 w-5" />
-      </button>
-      <button
+        className="text-green-400 hover:text-green-300 bg-green-500/10 hover:bg-green-500/20"
+      />
+      <ActionButton
+        icon={X}
+        label="Reject"
         onClick={() => onStatusChange('rejected')}
-        className="p-1 text-red-400 hover:text-red-300 transition-colors"
-        title="Reject"
-      >
-        <X className="h-5 w-5" />
-      </button>
+        className="text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20"
+      />
     </>
   );
 }

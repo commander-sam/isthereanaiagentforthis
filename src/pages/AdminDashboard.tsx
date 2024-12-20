@@ -1,114 +1,136 @@
 import React, { useState } from 'react';
-import { Tool, ToolStatus } from '../types';
-import { ToolFormData } from '../types/admin';
-import { toolsManager } from '../utils/toolsManager';
+import { Agent, AgentStatus } from '../types';
+import { AgentFormData } from '../types/admin';
+import { agentsManager } from '../utils/agentsManager';
 import AdminToolForm from '../components/admin/form/AdminToolForm';
 import ToolsList from '../components/admin/ToolsList';
 import BulkUpload from '../components/admin/BulkUpload';
-import { Plus, Upload } from 'lucide-react';
+import { Plus, Upload, Trash2 } from 'lucide-react';
+import ActionButton from '../components/common/ActionButton';
 
 export default function AdminDashboard() {
-  const [tools, setTools] = useState<Tool[]>(toolsManager.getAllToolsForAdmin());
+  const [agents, setAgents] = useState<Agent[]>(agentsManager.getAllAgentsForAdmin());
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBulkUploadOpen, setIsBulkUploadOpen] = useState(false);
-  const [editingTool, setEditingTool] = useState<Tool | undefined>();
+  const [editingAgent, setEditingAgent] = useState<Agent | undefined>();
+  const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 
-  const handleAddTool = (formData: ToolFormData) => {
-    const newTool = toolsManager.addTool(formData);
-    setTools(toolsManager.getAllToolsForAdmin());
+  const handleAddAgent = (formData: AgentFormData) => {
+    const newAgent = agentsManager.addAgent(formData);
+    setAgents(agentsManager.getAllAgentsForAdmin());
     setIsFormOpen(false);
   };
 
-  const handleUpdateTool = (formData: ToolFormData) => {
-    if (editingTool) {
-      const updatedTool = toolsManager.updateTool(editingTool.id, formData);
-      if (updatedTool) {
-        setTools(toolsManager.getAllToolsForAdmin());
-        setEditingTool(undefined);
+  const handleUpdateAgent = (formData: AgentFormData) => {
+    if (editingAgent) {
+      const updatedAgent = agentsManager.updateAgent(editingAgent.id, formData);
+      if (updatedAgent) {
+        setAgents(agentsManager.getAllAgentsForAdmin());
+        setEditingAgent(undefined);
         setIsFormOpen(false);
       }
     }
   };
 
-  const handleDeleteTool = (id: string) => {
-    if (window.confirm('Are you sure you want to delete this tool?')) {
-      const deleted = toolsManager.deleteTool(id);
-      if (deleted) {
-        setTools(toolsManager.getAllToolsForAdmin());
-      }
+  const handleDeleteAgent = (id: string) => {
+    if (window.confirm('Are you sure you want to delete this agent?')) {
+      agentsManager.bulkDelete([id]);
+      setAgents(agentsManager.getAllAgentsForAdmin());
     }
   };
 
-  const handleEdit = (tool: Tool) => {
-    setEditingTool(tool);
+  const handleBulkDelete = () => {
+    if (selectedAgents.length === 0) return;
+    
+    if (window.confirm(`Are you sure you want to delete ${selectedAgents.length} agents?`)) {
+      agentsManager.bulkDelete(selectedAgents);
+      setAgents(agentsManager.getAllAgentsForAdmin());
+      setSelectedAgents([]);
+    }
+  };
+
+  const handleEdit = (agent: Agent) => {
+    setEditingAgent(agent);
     setIsFormOpen(true);
   };
 
-  const handleStatusChange = (id: string, status: ToolStatus) => {
-    const updated = toolsManager.updateToolStatus(id, status);
+  const handleStatusChange = (id: string, status: AgentStatus) => {
+    const updated = agentsManager.updateAgentStatus(id, status);
     if (updated) {
-      setTools(toolsManager.getAllToolsForAdmin());
+      setAgents(agentsManager.getAllAgentsForAdmin());
     }
   };
 
-  const handleBulkUpload = (toolsData: ToolFormData[]) => {
-    toolsData.forEach(tool => {
-      toolsManager.addTool(tool);
+  const handleBulkUpload = (agentsData: AgentFormData[]) => {
+    agentsData.forEach(agent => {
+      agentsManager.addAgent(agent);
     });
-    setTools(toolsManager.getAllToolsForAdmin());
+    setAgents(agentsManager.getAllAgentsForAdmin());
     setIsBulkUploadOpen(false);
+  };
+
+  const handleToggleFeatured = (id: string) => {
+    const updated = agentsManager.toggleFeatured(id);
+    if (updated) {
+      setAgents(agentsManager.getAllAgentsForAdmin());
+    }
   };
 
   return (
     <div className="min-h-screen bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-white">Manage Tools</h1>
+          <h1 className="text-3xl font-bold text-white">Manage Agents</h1>
           <div className="flex space-x-4">
-            <button
+            {selectedAgents.length > 0 && (
+              <ActionButton
+                icon={Trash2}
+                label={`Delete Selected (${selectedAgents.length})`}
+                onClick={handleBulkDelete}
+                className="bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"
+              />
+            )}
+            <ActionButton
+              icon={Upload}
+              label="Bulk Upload"
               onClick={() => setIsBulkUploadOpen(true)}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <Upload className="h-5 w-5 mr-2" />
-              Bulk Upload
-            </button>
-            <button
+              className="bg-green-500/10 hover:bg-green-500/20 text-green-400 hover:text-green-300"
+            />
+            <ActionButton
+              icon={Plus}
+              label="Add New Agent"
               onClick={() => {
-                setEditingTool(undefined);
+                setEditingAgent(undefined);
                 setIsFormOpen(true);
               }}
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Add New Tool
-            </button>
+              className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300"
+            />
           </div>
         </div>
 
         {isBulkUploadOpen ? (
-          <div className="mb-8">
-            <BulkUpload
-              onUpload={handleBulkUpload}
-              onClose={() => setIsBulkUploadOpen(false)}
-            />
-          </div>
+          <BulkUpload
+            onUpload={handleBulkUpload}
+            onClose={() => setIsBulkUploadOpen(false)}
+          />
         ) : isFormOpen ? (
-          <div className="mb-8">
-            <AdminToolForm
-              initialData={editingTool}
-              onSubmit={editingTool ? handleUpdateTool : handleAddTool}
-              onCancel={() => {
-                setIsFormOpen(false);
-                setEditingTool(undefined);
-              }}
-            />
-          </div>
+          <AdminToolForm
+            initialData={editingAgent}
+            onSubmit={editingAgent ? handleUpdateAgent : handleAddAgent}
+            onCancel={() => {
+              setIsFormOpen(false);
+              setEditingAgent(undefined);
+            }}
+          />
         ) : (
           <ToolsList
-            tools={tools}
+            agents={agents}
             onEdit={handleEdit}
-            onDelete={handleDeleteTool}
+            onDelete={handleDeleteAgent}
             onStatusChange={handleStatusChange}
+            onToggleFeatured={handleToggleFeatured}
+            selectedAgents={selectedAgents}
+            onSelectionChange={setSelectedAgents}
           />
         )}
       </div>
