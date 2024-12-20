@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Shield } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
 import AuthForm from '../components/auth/AuthForm';
+import { useAuthForm } from '../hooks/useAuth';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const { signIn } = useAuth();
+  const { isLoading, error, handleAuth } = useAuthForm();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,42 +18,13 @@ export default function AdminLoginPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
+    
+    const data = await handleAuth(mode, email, password);
+    if (data?.user) {
       if (mode === 'signup') {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`
-          }
-        });
-
-        if (signUpError) {
-          console.error('Signup error:', signUpError);
-          throw signUpError;
-        }
-
-        if (!data.user) {
-          throw new Error('No user data returned');
-        }
-
-        // After successful signup, try to sign in
         await signIn(email, password);
-        navigate(from, { replace: true });
-      } else {
-        await signIn(email, password);
-        navigate(from, { replace: true });
       }
-    } catch (err: any) {
-      console.error('Auth error:', err);
-      setError(mode === 'signup' 
-        ? `Failed to create account: ${err.message || 'Please try again'}` 
-        : 'Failed to sign in. Please check your credentials.');
-    } finally {
-      setIsLoading(false);
+      navigate(from, { replace: true });
     }
   }
 
