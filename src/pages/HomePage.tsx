@@ -1,20 +1,20 @@
 import React from 'react';
 import Hero from '../components/Hero';
-import FeaturedTools from '../components/sections/FeaturedTools';
-import AllTools from '../components/sections/AllTools';
+import FeaturedAgents from '../components/sections/FeaturedAgents';
+import AllAgents from '../components/sections/AllAgents';
 import CategoriesSection from '../components/sections/CategoriesSection';
 import { categories } from '../data/categories';
-import { useTools } from '../hooks/useTools';
+import { useAgents } from '../hooks/useAgents';
 
 export default function HomePage() {
-  const tools = useTools();
-  const featuredTools = tools.filter(tool => tool.featured);
+  const agents = useAgents();
+  const featuredAgents = agents.filter(agent => agent.featured);
 
   return (
     <div className="bg-gray-900 min-h-screen">
       <Hero />
-      <FeaturedTools tools={featuredTools} />
-      <AllTools tools={tools} />
+      <FeaturedAgents agents={featuredAgents} />
+      <AllAgents agents={agents} />
       <CategoriesSection categories={categories} />
     </div>
   );

@@ -19,14 +19,14 @@ export default function Navbar() {
             <Link to="/" className="text-gray-200 hover:text-blue-400">
               Home
             </Link>
-            <Link to="/tools" className="text-gray-200 hover:text-blue-400">
-              All Tools
+            <Link to="/agents" className="text-gray-200 hover:text-blue-400">
+              All Agents
             </Link>
             <Link to="/categories" className="text-gray-200 hover:text-blue-400">
               Categories
             </Link>
             <Link to="/submit" className="text-gray-200 hover:text-blue-400">
-              Submit a Tool
+              Submit an Agent
             </Link>
             <Link 
               to="/admin" 

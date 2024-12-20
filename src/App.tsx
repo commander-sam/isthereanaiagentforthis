@@ -5,10 +5,10 @@ import AdminRoute from './components/auth/AdminRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
-import ToolsPage from './pages/ToolsPage';
+import AgentsPage from './pages/AgentsPage';
 import CategoriesPage from './pages/CategoriesPage';
-import ToolDetailsPage from './pages/ToolDetailsPage';
-import SubmitToolPage from './pages/SubmitToolPage';
+import AgentDetailsPage from './pages/AgentDetailsPage';
+import SubmitAgentPage from './pages/SubmitToolPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLoginPage from './pages/AdminLoginPage';
 
@@ -21,10 +21,10 @@ export default function App() {
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/tools" element={<ToolsPage />} />
+              <Route path="/agents" element={<AgentsPage />} />
               <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/tool/:id" element={<ToolDetailsPage />} />
-              <Route path="/submit" element={<SubmitToolPage />} />
+              <Route path="/agent/:id" element={<AgentDetailsPage />} />
+              <Route path="/submit" element={<SubmitAgentPage />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route
                 path="/admin"

@@ -1,15 +1,15 @@
 import React from 'react';
 
 interface HeaderProps {
-  toolCount: number;
+  agentCount: number;
 }
 
-export default function Header({ toolCount }: HeaderProps) {
+export default function Header({ agentCount }: HeaderProps) {
   return (
     <div className="flex justify-between items-center mb-8">
-      <h2 className="text-3xl font-bold text-white">All Tools</h2>
+      <h2 className="text-3xl font-bold text-white">All AI Agents</h2>
       <p className="text-gray-400">
-        {toolCount} {toolCount === 1 ? 'tool' : 'tools'} found
+        {agentCount} {agentCount === 1 ? 'agent' : 'agents'} found
       </p>
     </div>
   );

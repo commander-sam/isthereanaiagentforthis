@@ -1,4 +1,4 @@
-export interface ToolFormData {
+export interface AgentFormData {
   name: string;
   shortDescription: string;
   logo: File | null;
@@ -13,6 +13,6 @@ export interface ToolFormData {
   discordUrl?: string;
 }
 
-export interface ToolFormErrors {
+export interface AgentFormErrors {
   [key: string]: string;
 }

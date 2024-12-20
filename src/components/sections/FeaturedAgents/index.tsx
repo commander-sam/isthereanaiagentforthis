@@ -1,6 +1,6 @@
 import React from 'react';
-import AgentCard from '../AgentCard';
-import { Agent } from '../../types';
+import AgentCard from '../../AgentCard';
+import { Agent } from '../../../types';
 
 interface FeaturedAgentsProps {
   agents: Agent[];
