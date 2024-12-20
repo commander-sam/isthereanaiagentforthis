@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AgentFormData } from '../../../types/admin';
+import { validateAgentForm } from '../../../utils/validation';
 import BasicInformation from './BasicInformation';
 import SocialLinks from '../../../components/form/SocialLinks';
 import GradientCard from '../../../components/common/GradientCard';
@@ -39,7 +40,11 @@ export default function SubmitAgentForm({ onSubmit }: SubmitAgentFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add validation logic here
+    const validationErrors = validateAgentForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
     onSubmit(formData);
   };
 

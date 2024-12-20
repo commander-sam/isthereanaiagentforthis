@@ -1,66 +1,70 @@
 import { AgentFormData } from '../types/admin';
-import { validateAgentForm } from './validation';
+
+// Normalize header text for comparison
+const normalizeHeader = (header: string): string => {
+  return header.toLowerCase().replace(/[^a-z]/g, '');
+};
+
+// Map common variations of column names
+const headerMappings: Record<string, string[]> = {
+  name: ['name', 'agentname', 'title'],
+  shortDescription: ['shortdescription', 'description', 'desc', 'about'],
+  source: ['source', 'sourcetype', 'type'],
+  pricing: ['pricing', 'price', 'pricingmodel', 'cost'],
+  contactEmail: ['contactemail', 'email', 'contact'],
+  websiteUrl: ['websiteurl', 'website', 'url', 'link']
+};
 
 export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
-  const text = await file.text();
-  const lines = text.split('\n');
-  const headers = lines[0].split(',').map(header => header.trim().toLowerCase());
-  
-  // Validate required headers
-  const requiredHeaders = ['name', 'shortdescription', 'source', 'pricing', 'contactemail', 'websiteurl'];
-  const missingHeaders = requiredHeaders.filter(header => !headers.includes(header));
-  
-  if (missingHeaders.length > 0) {
-    throw new Error(`Missing required columns: ${missingHeaders.join(', ')}`);
-  }
-
-  const agents = lines.slice(1)
-    .filter(line => line.trim())
-    .map((line, index) => {
-      const values = line.split(',').map(value => value.trim());
-      const agent: AgentFormData = {
-        name: '',
-        shortDescription: '',
-        logo: null,
-        source: 'closed_source',
-        pricing: 'free',
-        contactEmail: '',
-        websiteUrl: '',
-      };
-      
-      headers.forEach((header, i) => {
-        if (values[i]) {
-          switch (header) {
-            case 'name':
-              agent.name = values[i];
-              break;
-            case 'shortdescription':
-              agent.shortDescription = values[i];
-              break;
-            case 'source':
-              agent.source = values[i] as 'open_source' | 'closed_source';
-              break;
-            case 'pricing':
-              agent.pricing = values[i] as 'free' | 'freemium' | 'paid';
-              break;
-            case 'contactemail':
-              agent.contactEmail = values[i];
-              break;
-            case 'websiteurl':
-              agent.websiteUrl = values[i];
-              break;
-          }
-        }
-      });
-
-      // Validate each row
-      const errors = validateAgentForm(agent);
-      if (Object.keys(errors).length > 0) {
-        throw new Error(`Row ${index + 2}: ${Object.values(errors).join(', ')}`);
+  try {
+    const text = await file.text();
+    const lines = text.split('\n');
+    
+    if (lines.length < 2) {
+      throw new Error('CSV file must contain at least a header row and one data row');
+    }
+    
+    // Get and normalize headers
+    const headers = lines[0].split(',').map(h => normalizeHeader(h.trim()));
+    
+    // Map headers to standardized field names
+    const columnMap = new Map<string, number>();
+    
+    for (const [field, variations] of Object.entries(headerMappings)) {
+      const index = headers.findIndex(h => variations.includes(h));
+      if (index !== -1) {
+        columnMap.set(field, index);
       }
+    }
 
-      return agent;
-    });
+    // Validate required fields
+    const missingFields = ['name', 'shortDescription', 'source', 'pricing', 'contactEmail', 'websiteUrl']
+      .filter(field => !columnMap.has(field));
 
-  return agents;
+    if (missingFields.length > 0) {
+      throw new Error(`Missing required columns: ${missingFields.join(', ')}`);
+    }
+
+    // Parse rows
+    return lines.slice(1)
+      .filter(line => line.trim())
+      .map(line => {
+        const values = line.split(',').map(v => v.trim());
+        
+        return {
+          name: values[columnMap.get('name')!] || '',
+          shortDescription: values[columnMap.get('shortDescription')!] || '',
+          logo: null,
+          source: values[columnMap.get('source')!]?.toLowerCase() === 'open_source' ? 'open_source' : 'closed_source',
+          pricing: (values[columnMap.get('pricing')!]?.toLowerCase() || 'free') as 'free' | 'freemium' | 'paid',
+          contactEmail: values[columnMap.get('contactEmail')!] || '',
+          websiteUrl: values[columnMap.get('websiteUrl')!] || '',
+        };
+      });
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Error parsing CSV file: ${error.message}`);
+    }
+    throw new Error('Error parsing CSV file. Please check the format.');
+  }
 };
