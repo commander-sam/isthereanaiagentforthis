@@ -8,25 +8,35 @@ export function useAgents() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchAgents = async () => {
       try {
         const data = await agentsManager.getAllAgents();
-        setAgents(data);
+        if (mounted) {
+          setAgents(data);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch agents');
+        if (mounted) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch agents');
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchAgents();
 
-    // Subscribe to updates
     const unsubscribe = agentsManager.subscribe(() => {
-      fetchAgents();
+      if (mounted) {
+        fetchAgents();
+      }
     });
 
     return () => {
+      mounted = false;
       unsubscribe();
     };
   }, []);

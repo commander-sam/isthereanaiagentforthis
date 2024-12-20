@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { Agent } from '../types';
+import { Agent, AgentStatus } from '../types';
 import { AgentFormData } from '../types/admin';
-import { AgentStatus } from '../types/enums';
+import { EventEmitter } from './eventEmitter';
 import { DATABASE_ENUMS } from '../constants/database';
 
 const supabase = createClient(
@@ -9,24 +9,9 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-class AgentsManager {
-  private subscribers: Set<() => void>;
-
+class AgentsManager extends EventEmitter {
   constructor() {
-    this.subscribers = new Set();
-  }
-
-  subscribe(callback: () => void) {
-    this.subscribers.add(callback);
-    return () => this.unsubscribe(callback);
-  }
-
-  unsubscribe(callback: () => void) {
-    this.subscribers.delete(callback);
-  }
-
-  private notifySubscribers() {
-    this.subscribers.forEach(callback => callback());
+    super();
   }
 
   async getAllAgents(): Promise<Agent[]> {
@@ -60,42 +45,19 @@ class AgentsManager {
     }
   }
 
-  async addAgent(formData: AgentFormData): Promise<Agent | null> {
+  async addAgent(formData: AgentFormData): Promise<Agent> {
     try {
-      // Upload logo if provided
-      let imageUrl = formData.imageUrl || 'https://via.placeholder.com/300';
-      if (formData.logo) {
-        const fileExt = formData.logo.name.split('.').pop();
-        const fileName = `${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('agent-logos')
-          .upload(fileName, formData.logo);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('agent-logos')
-          .getPublicUrl(fileName);
-
-        imageUrl = publicUrl;
-      }
-
-      // Get current user
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Insert agent data
       const { data, error } = await supabase
         .from('agents')
         .insert([{
           name: formData.name,
           description: formData.description || formData.shortDescription,
           short_description: formData.shortDescription,
-          image_url: imageUrl,
+          image_url: formData.imageUrl || 'https://via.placeholder.com/300',
           category: formData.category || 'chatbots',
           url: formData.websiteUrl,
-          featured: formData.featured || false,
-          status: formData.status || DATABASE_ENUMS.STATUS.PENDING,
+          featured: false,
+          status: DATABASE_ENUMS.STATUS.PENDING,
           source: formData.source,
           pricing: formData.pricing,
           contact_email: formData.contactEmail,
@@ -104,22 +66,110 @@ class AgentsManager {
           facebook_url: formData.facebookUrl,
           linkedin_url: formData.linkedinUrl,
           discord_url: formData.discordUrl,
-          submitted_by: user?.id
+          submitted_by: (await supabase.auth.getUser()).data.user?.id
         }])
         .select()
         .single();
 
       if (error) throw error;
+      if (!data) throw new Error('Failed to create agent');
 
       this.notifySubscribers();
       return data;
     } catch (error) {
-      console.error('Error in addAgent:', error);
+      console.error('Error adding agent:', error);
       throw error;
     }
   }
 
-  // ... rest of the methods remain the same ...
+  async updateAgentStatus(id: string, status: AgentStatus): Promise<Agent> {
+    try {
+      const { data, error } = await supabase
+        .from('agents')
+        .update({ status })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Agent not found');
+
+      this.notifySubscribers();
+      return data;
+    } catch (error) {
+      console.error('Error updating agent status:', error);
+      throw error;
+    }
+  }
+
+  async toggleFeatured(id: string): Promise<Agent> {
+    try {
+      const { data: agent } = await supabase
+        .from('agents')
+        .select('featured')
+        .eq('id', id)
+        .single();
+
+      if (!agent) throw new Error('Agent not found');
+
+      const { data, error } = await supabase
+        .from('agents')
+        .update({ featured: !agent.featured })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (!data) throw new Error('Failed to update agent');
+
+      this.notifySubscribers();
+      return data;
+    } catch (error) {
+      console.error('Error toggling featured status:', error);
+      throw error;
+    }
+  }
+
+  async deleteAgent(id: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('agents')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      this.notifySubscribers();
+    } catch (error) {
+      console.error('Error deleting agent:', error);
+      throw error;
+    }
+  }
+
+  async bulkDelete(ids: string[]): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('agents')
+        .delete()
+        .in('id', ids);
+
+      if (error) throw error;
+
+      this.notifySubscribers();
+    } catch (error) {
+      console.error('Error bulk deleting agents:', error);
+      throw error;
+    }
+  }
+
+  protected notifySubscribers(): void {
+    this.emit('change');
+  }
+
+  subscribe(callback: () => void): () => void {
+    this.on('change', callback);
+    return () => this.off('change', callback);
+  }
 }
 
 export const agentsManager = new AgentsManager();
