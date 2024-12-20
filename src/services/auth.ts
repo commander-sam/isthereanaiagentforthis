@@ -4,11 +4,16 @@ import { supabase } from '../lib/supabase';
 export class AuthService {
   static async signUp(email: string, password: string): Promise<AuthResponse> {
     try {
+      console.log('Attempting signup with Supabase URL:', import.meta.env.VITE_SUPABASE_URL);
+      
       const response = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/admin`
+          emailRedirectTo: `${window.location.origin}/admin`,
+          data: {
+            role: 'admin' // Add role for first user
+          }
         }
       });
 
@@ -20,6 +25,9 @@ export class AuthService {
       return response;
     } catch (error) {
       console.error('Signup process error:', error);
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Connection to authentication service failed. Please check if the Supabase project is accessible.');
+      }
       throw this.handleAuthError(error as AuthError);
     }
   }
@@ -39,15 +47,22 @@ export class AuthService {
       return response;
     } catch (error) {
       console.error('Sign in process error:', error);
+      if (error instanceof Error && error.message.includes('Failed to fetch')) {
+        throw new Error('Connection to authentication service failed. Please check if the Supabase project is accessible.');
+      }
       throw this.handleAuthError(error as AuthError);
     }
   }
 
   private static handleAuthError(error: AuthError): Error {
+    if (!navigator.onLine) {
+      return new Error('No internet connection. Please check your network.');
+    }
+
     // Network related errors
-    if (error.message?.includes('fetch')) {
+    if (error.message?.includes('fetch') || error.message?.includes('network')) {
       return new Error(
-        'Unable to connect to authentication service. Please check your internet connection.'
+        'Unable to reach the authentication service. Please try again in a few moments.'
       );
     }
 
@@ -62,7 +77,9 @@ export class AuthService {
       case 429:
         return new Error('Too many attempts. Please try again later');
       default:
-        return new Error(error.message || 'An unexpected error occurred');
+        return new Error(
+          error.message || 'An unexpected error occurred. Please try again.'
+        );
     }
   }
 }
