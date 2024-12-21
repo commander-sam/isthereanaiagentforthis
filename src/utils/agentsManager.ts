@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Agent, AgentStatus } from '../types';
+import { Agent, AgentStatus, Feature } from '../types';
 import { AgentFormData } from '../types/admin';
 import { EventEmitter } from './eventEmitter';
 import { DATABASE_ENUMS } from '../constants/database';
@@ -9,7 +9,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
-class AgentsManager extends EventEmitter {
+export class AgentsManager extends EventEmitter {
   private static readonly CHANGE_EVENT = 'change';
 
   constructor() {
@@ -129,6 +129,8 @@ class AgentsManager extends EventEmitter {
       facebook_url: formData.facebookUrl,
       linkedin_url: formData.linkedinUrl,
       discord_url: formData.discordUrl,
+      features: formData.features && formData.features.length > 0 ? formData.features : null,
+      use_cases: formData.useCases && formData.useCases.length > 0 ? formData.useCases : null,
       submitted_by: null // Will be set by RLS
     };
   }
@@ -152,15 +154,16 @@ class AgentsManager extends EventEmitter {
       twitterUrl: data.twitter_url,
       facebookUrl: data.facebook_url,
       linkedinUrl: data.linkedin_url,
-      discordUrl: data.discord_url
+      discordUrl: data.discord_url,
+      features: data.features as Feature[] || [],
+      useCases: data.use_cases as string[] || []
     };
   }
 
   private mapDatabaseToAgents(data: any[]): Agent[] {
     return data.map(item => this.mapDatabaseToAgent(item));
   }
-
-  // Rest of the class implementation remains the same...
 }
 
+// Create and export a singleton instance
 export const agentsManager = new AgentsManager();

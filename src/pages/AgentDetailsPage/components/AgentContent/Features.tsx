@@ -1,11 +1,7 @@
 import React from 'react';
-import { Agent } from '../../../../types';
+import { Sparkles } from 'lucide-react';
+import { Feature } from '../../../../types';
 import GradientCard from '../../../../components/common/GradientCard';
-
-interface Feature {
-  title: string;
-  description: string;
-}
 
 interface FeaturesProps {
   features: Feature[];
@@ -22,7 +18,7 @@ export default function Features({ features }: FeaturesProps) {
           <div key={index} className="flex items-start">
             <div className="flex-shrink-0">
               <div className="p-3 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                <div className="h-6 w-6 text-blue-400" />
+                <Sparkles className="h-6 w-6 text-blue-400" />
               </div>
             </div>
             <div className="ml-4">

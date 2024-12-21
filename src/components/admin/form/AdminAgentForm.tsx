@@ -4,6 +4,7 @@ import { AgentFormData } from '../../../types/admin';
 import BasicInformation from './BasicInformation';
 import SocialLinks from '../../form/SocialLinks';
 import StatusSelect from './StatusSelect';
+import FeaturesAndUseCases from './FeaturesAndUseCases';
 import GradientCard from '../../common/GradientCard';
 import { validateAgentForm } from '../../../utils/validation';
 import { DATABASE_ENUMS } from '../../../constants/database';
@@ -32,7 +33,9 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
     status: DATABASE_ENUMS.STATUS.DRAFT,
     category: 'chatbots',
     featured: false,
-    imageUrl: ''
+    imageUrl: '',
+    features: [],
+    useCases: []
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -58,7 +61,9 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
         status: initialData.status,
         category: initialData.category,
         featured: initialData.featured || false,
-        imageUrl: initialData.imageUrl
+        imageUrl: initialData.imageUrl,
+        features: initialData.features || [],
+        useCases: initialData.useCases || []
       });
       setLogoPreview(initialData.imageUrl);
     }
@@ -128,6 +133,17 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
         <SocialLinks
           values={formData}
           onChange={handleChange}
+          errors={errors}
+        />
+      </GradientCard>
+
+      <GradientCard>
+        <h3 className="text-xl font-medium text-white mb-6">Features & Use Cases</h3>
+        <FeaturesAndUseCases
+          features={formData.features || []}
+          useCases={formData.useCases || []}
+          onFeaturesChange={(features) => handleChange('features', features)}
+          onUseCasesChange={(useCases) => handleChange('useCases', useCases)}
           errors={errors}
         />
       </GradientCard>
