@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { categories } from '../../data/categories';
+import { useCategories } from '../../hooks/useCategories';
 import { useAgents } from '../../hooks/useAgents';
 import CategoryCard from './components/CategoryCard';
 import PageTitle from '../../components/common/PageTitle';
@@ -8,17 +8,18 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
 export default function CategoriesPage() {
-  const { agents, isLoading, error } = useAgents();
+  const { categories, isLoading: loadingCategories, error: categoriesError } = useCategories();
+  const { agents, isLoading: loadingAgents, error: agentsError } = useAgents();
 
-  if (isLoading) {
+  if (loadingCategories || loadingAgents) {
     return <LoadingSpinner />;
   }
 
-  if (error) {
+  if (categoriesError || agentsError) {
     return (
       <ErrorMessage 
         title="Error Loading Categories"
-        message={error}
+        message={categoriesError || agentsError || 'Failed to load data'}
       />
     );
   }

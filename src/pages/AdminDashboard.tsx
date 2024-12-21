@@ -11,22 +11,14 @@ import PageTitle from '../components/common/PageTitle';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useAdminAgents } from '../hooks/useAdminAgents';
-import { useAdminForm } from '../hooks/useAdminForm';
+
+type View = 'list' | 'form' | 'bulk';
 
 export default function AdminDashboard() {
   const { agents, isLoading, error: fetchError } = useAdminAgents();
-  const {
-    isFormOpen,
-    isBulkUploadOpen,
-    editingAgent,
-    error: formError,
-    handleAddAgent,
-    handleUpdateAgent,
-    handleEdit,
-    handleCancel,
-    openBulkUpload,
-    closeBulkUpload
-  } = useAdminForm();
+  const [currentView, setCurrentView] = useState<View>('list');
+  const [editingAgent, setEditingAgent] = useState<Agent | undefined>();
+  const [formError, setFormError] = useState<string | null>(null);
   const [selectedAgents, setSelectedAgents] = useState<string[]>([]);
 
   if (isLoading) {
@@ -41,6 +33,43 @@ export default function AdminDashboard() {
       />
     );
   }
+
+  const handleAddAgent = async (formData: AgentFormData) => {
+    try {
+      setFormError(null);
+      await agentsManager.addAgent(formData);
+      setCurrentView('list');
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Failed to add agent');
+      console.error('Error adding agent:', error);
+    }
+  };
+
+  const handleUpdateAgent = async (formData: AgentFormData & { status?: AgentStatus }) => {
+    if (!editingAgent) return;
+    
+    try {
+      setFormError(null);
+      await agentsManager.updateAgent(editingAgent.id, formData);
+      setEditingAgent(undefined);
+      setCurrentView('list');
+    } catch (error) {
+      setFormError(error instanceof Error ? error.message : 'Failed to update agent');
+      console.error('Error updating agent:', error);
+    }
+  };
+
+  const handleEdit = (agent: Agent) => {
+    setFormError(null);
+    setEditingAgent(agent);
+    setCurrentView('form');
+  };
+
+  const handleCancel = () => {
+    setFormError(null);
+    setEditingAgent(undefined);
+    setCurrentView('list');
+  };
 
   const handleDeleteAgent = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this agent?')) {
@@ -86,9 +115,41 @@ export default function AdminDashboard() {
       for (const agent of agentsData) {
         await agentsManager.addAgent(agent);
       }
-      closeBulkUpload();
+      setCurrentView('list');
     } catch (error) {
       console.error('Error bulk uploading agents:', error);
+    }
+  };
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'bulk':
+        return (
+          <BulkUpload
+            onUpload={handleBulkUpload}
+            onClose={() => setCurrentView('list')}
+          />
+        );
+      case 'form':
+        return (
+          <AdminAgentForm
+            initialData={editingAgent}
+            onSubmit={editingAgent ? handleUpdateAgent : handleAddAgent}
+            onCancel={handleCancel}
+          />
+        );
+      default:
+        return (
+          <AgentsList
+            agents={agents}
+            onEdit={handleEdit}
+            onDelete={handleDeleteAgent}
+            onStatusChange={handleStatusChange}
+            onToggleFeatured={handleToggleFeatured}
+            selectedAgents={selectedAgents}
+            onSelectionChange={setSelectedAgents}
+          />
+        );
     }
   };
 
@@ -105,7 +166,7 @@ export default function AdminDashboard() {
             <ActionButton
               icon={Upload}
               label="Bulk Upload"
-              onClick={openBulkUpload}
+              onClick={() => setCurrentView('bulk')}
               className="bg-green-600 hover:bg-green-700 border-none"
             />
             <ActionButton
@@ -113,7 +174,7 @@ export default function AdminDashboard() {
               label="Add New Agent"
               onClick={() => {
                 handleCancel();
-                setIsFormOpen(true);
+                setCurrentView('form');
               }}
               className="bg-blue-600 hover:bg-blue-700 border-none"
             />
@@ -134,28 +195,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {isBulkUploadOpen ? (
-          <BulkUpload
-            onUpload={handleBulkUpload}
-            onClose={closeBulkUpload}
-          />
-        ) : isFormOpen ? (
-          <AdminAgentForm
-            initialData={editingAgent}
-            onSubmit={editingAgent ? handleUpdateAgent : handleAddAgent}
-            onCancel={handleCancel}
-          />
-        ) : (
-          <AgentsList
-            agents={agents}
-            onEdit={handleEdit}
-            onDelete={handleDeleteAgent}
-            onStatusChange={handleStatusChange}
-            onToggleFeatured={handleToggleFeatured}
-            selectedAgents={selectedAgents}
-            onSelectionChange={setSelectedAgents}
-          />
-        )}
+        {renderContent()}
       </div>
     </div>
   );
