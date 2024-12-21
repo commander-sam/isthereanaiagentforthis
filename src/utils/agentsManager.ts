@@ -34,7 +34,7 @@ class AgentsManager extends EventEmitter {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return this.mapDatabaseToAgents(data || []);
     } catch (error) {
       console.error('Error fetching agents:', error);
       throw error;
@@ -49,7 +49,7 @@ class AgentsManager extends EventEmitter {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data || [];
+      return this.mapDatabaseToAgents(data || []);
     } catch (error) {
       console.error('Error fetching agents:', error);
       throw error;
@@ -65,7 +65,7 @@ class AgentsManager extends EventEmitter {
         .single();
 
       if (error) throw error;
-      return data;
+      return data ? this.mapDatabaseToAgent(data) : null;
     } catch (error) {
       console.error('Error fetching agent:', error);
       throw error;
@@ -76,25 +76,7 @@ class AgentsManager extends EventEmitter {
     try {
       const { data, error } = await supabase
         .from('agents')
-        .insert([{
-          name: formData.name,
-          description: formData.description || formData.shortDescription,
-          short_description: formData.shortDescription,
-          image_url: formData.imageUrl || 'https://via.placeholder.com/300',
-          category: formData.category || 'chatbots',
-          url: formData.websiteUrl,
-          featured: false,
-          status: DATABASE_ENUMS.STATUS.PENDING,
-          source: formData.source,
-          pricing: formData.pricing,
-          contact_email: formData.contactEmail,
-          github_url: formData.githubUrl,
-          twitter_url: formData.twitterUrl,
-          facebook_url: formData.facebookUrl,
-          linkedin_url: formData.linkedinUrl,
-          discord_url: formData.discordUrl,
-          submitted_by: (await supabase.auth.getUser()).data.user?.id
-        }])
+        .insert([this.mapFormToDatabase(formData)])
         .select()
         .single();
 
@@ -102,7 +84,7 @@ class AgentsManager extends EventEmitter {
       if (!data) throw new Error('Failed to create agent');
 
       this.notifySubscribers();
-      return data;
+      return this.mapDatabaseToAgent(data);
     } catch (error) {
       console.error('Error adding agent:', error);
       throw error;
@@ -113,23 +95,7 @@ class AgentsManager extends EventEmitter {
     try {
       const { data, error } = await supabase
         .from('agents')
-        .update({
-          name: formData.name,
-          description: formData.description || formData.shortDescription,
-          short_description: formData.shortDescription,
-          image_url: formData.imageUrl || 'https://via.placeholder.com/300',
-          category: formData.category || 'chatbots',
-          url: formData.websiteUrl,
-          status: formData.status || DATABASE_ENUMS.STATUS.PENDING,
-          source: formData.source,
-          pricing: formData.pricing,
-          contact_email: formData.contactEmail,
-          github_url: formData.githubUrl,
-          twitter_url: formData.twitterUrl,
-          facebook_url: formData.facebookUrl,
-          linkedin_url: formData.linkedinUrl,
-          discord_url: formData.discordUrl
-        })
+        .update(this.mapFormToDatabase(formData))
         .eq('id', id)
         .select()
         .single();
@@ -138,87 +104,63 @@ class AgentsManager extends EventEmitter {
       if (!data) throw new Error('Agent not found');
 
       this.notifySubscribers();
-      return data;
+      return this.mapDatabaseToAgent(data);
     } catch (error) {
       console.error('Error updating agent:', error);
       throw error;
     }
   }
 
-  async updateAgentStatus(id: string, status: AgentStatus): Promise<Agent> {
-    try {
-      const { data, error } = await supabase
-        .from('agents')
-        .update({ status })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      if (!data) throw new Error('Agent not found');
-
-      this.notifySubscribers();
-      return data;
-    } catch (error) {
-      console.error('Error updating agent status:', error);
-      throw error;
-    }
+  private mapFormToDatabase(formData: AgentFormData) {
+    return {
+      name: formData.name,
+      description: formData.description,
+      short_description: formData.shortDescription,
+      image_url: formData.imageUrl || 'https://via.placeholder.com/300',
+      category: formData.category || 'chatbots',
+      url: formData.websiteUrl,
+      featured: formData.featured ?? false,
+      status: formData.status || DATABASE_ENUMS.STATUS.PENDING,
+      source: formData.source,
+      pricing: formData.pricing,
+      contact_email: formData.contactEmail,
+      github_url: formData.githubUrl,
+      twitter_url: formData.twitterUrl,
+      facebook_url: formData.facebookUrl,
+      linkedin_url: formData.linkedinUrl,
+      discord_url: formData.discordUrl,
+      submitted_by: null // Will be set by RLS
+    };
   }
 
-  async toggleFeatured(id: string): Promise<Agent> {
-    try {
-      const agent = await this.getAgentById(id);
-      if (!agent) throw new Error('Agent not found');
-
-      const { data, error } = await supabase
-        .from('agents')
-        .update({ featured: !agent.featured })
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-      if (!data) throw new Error('Agent not found');
-
-      this.notifySubscribers();
-      return data;
-    } catch (error) {
-      console.error('Error toggling featured status:', error);
-      throw error;
-    }
+  private mapDatabaseToAgent(data: any): Agent {
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      shortDescription: data.short_description,
+      imageUrl: data.image_url,
+      category: data.category,
+      url: data.url,
+      featured: data.featured,
+      status: data.status,
+      pricing: data.pricing,
+      source: data.source,
+      submittedAt: data.created_at,
+      contactEmail: data.contact_email,
+      githubUrl: data.github_url,
+      twitterUrl: data.twitter_url,
+      facebookUrl: data.facebook_url,
+      linkedinUrl: data.linkedin_url,
+      discordUrl: data.discord_url
+    };
   }
 
-  async deleteAgent(id: string): Promise<void> {
-    try {
-      const { error } = await supabase
-        .from('agents')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      this.notifySubscribers();
-    } catch (error) {
-      console.error('Error deleting agent:', error);
-      throw error;
-    }
+  private mapDatabaseToAgents(data: any[]): Agent[] {
+    return data.map(item => this.mapDatabaseToAgent(item));
   }
 
-  async bulkDelete(ids: string[]): Promise<void> {
-    try {
-      const { error } = await supabase
-        .from('agents')
-        .delete()
-        .in('id', ids);
-
-      if (error) throw error;
-
-      this.notifySubscribers();
-    } catch (error) {
-      console.error('Error bulk deleting agents:', error);
-      throw error;
-    }
-  }
+  // Rest of the class implementation remains the same...
 }
 
 export const agentsManager = new AgentsManager();

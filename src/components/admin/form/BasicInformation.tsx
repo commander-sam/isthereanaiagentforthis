@@ -1,8 +1,8 @@
 import React from 'react';
-import FormInput from '../../form/FormInput';
+import { AgentFormData } from '../../../types/admin';
+import TextInput from './fields/TextInput';
 import FileUpload from '../../form/FileUpload';
 import RadioGroup from '../../form/RadioGroup';
-import { AgentFormData } from '../../../types/admin';
 import { FORM_OPTIONS } from '../../../constants/form';
 
 interface BasicInformationProps {
@@ -15,8 +15,63 @@ interface BasicInformationProps {
 export default function BasicInformation({ values, onChange, errors, logoPreview }: BasicInformationProps) {
   return (
     <div className="space-y-6">
-      {/* Other form fields remain the same */}
-      
+      <TextInput
+        label="Agent Name"
+        name="name"
+        value={values.name}
+        onChange={onChange}
+        error={errors.name}
+        placeholder="Enter the name of the AI agent"
+      />
+
+      <TextInput
+        label="Full Description"
+        name="description"
+        value={values.description}
+        onChange={onChange}
+        error={errors.description}
+        placeholder="Detailed description of the agent's features, capabilities, and use cases"
+        multiline
+        rows={6}
+      />
+
+      <TextInput
+        label="Short Description"
+        name="shortDescription"
+        value={values.shortDescription}
+        onChange={onChange}
+        error={errors.shortDescription}
+        placeholder="Brief overview of the agent (1-2 sentences)"
+      />
+
+      <FileUpload
+        label="Logo"
+        onChange={(file) => onChange('logo', file)}
+        accept="image/*"
+        error={errors.logo}
+        preview={logoPreview}
+      />
+
+      <TextInput
+        label="Website URL"
+        name="websiteUrl"
+        value={values.websiteUrl}
+        onChange={onChange}
+        error={errors.websiteUrl}
+        placeholder="https://"
+        type="url"
+      />
+
+      <TextInput
+        label="Contact Email"
+        name="contactEmail"
+        value={values.contactEmail}
+        onChange={onChange}
+        error={errors.contactEmail}
+        placeholder="contact@example.com"
+        type="email"
+      />
+
       <RadioGroup
         label="Source"
         name="source"
@@ -34,8 +89,6 @@ export default function BasicInformation({ values, onChange, errors, logoPreview
         onChange={(value) => onChange('pricing', value)}
         error={errors.pricing}
       />
-
-      {/* Other form fields remain the same */}
     </div>
   );
 }

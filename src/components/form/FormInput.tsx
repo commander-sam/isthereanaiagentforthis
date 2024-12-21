@@ -12,9 +12,13 @@ export default function FormInput({
   error, 
   helperText,
   icon,
+  value = '', // Provide default empty string
   className = '',
   ...props 
 }: FormInputProps) {
+  // Ensure value is always defined
+  const inputValue = value ?? '';
+
   return (
     <div className="mb-4">
       <label className="block text-sm font-medium text-blue-300 mb-2">
@@ -25,6 +29,7 @@ export default function FormInput({
         <div className="relative flex items-center">
           <input
             {...props}
+            value={inputValue}
             className={`w-full px-4 py-3 bg-gray-900/50 backdrop-blur-sm border border-white/10 rounded-lg text-white placeholder-blue-200/50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${icon ? 'pl-11' : ''} ${className}`}
           />
           {icon && (
