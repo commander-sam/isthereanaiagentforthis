@@ -7,6 +7,13 @@ interface DetailsProps {
   agent: Agent;
 }
 
+const formatValue = (value: string): string => {
+  return value
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
 export default function Details({ agent }: DetailsProps) {
   const details = [
     {
@@ -14,16 +21,12 @@ export default function Details({ agent }: DetailsProps) {
       value: <CategoryBadge category={agent.category} />
     },
     {
-      label: 'Last Updated',
-      value: <span className="text-white">March 15, 2024</span>
+      label: 'Pricing',
+      value: <span className="text-white">{formatValue(agent.pricing)}</span>
     },
     {
-      label: 'Version',
-      value: <span className="text-white">2.0.0</span>
-    },
-    {
-      label: 'License',
-      value: <span className="text-white">MIT</span>
+      label: 'Source',
+      value: <span className="text-white">{formatValue(agent.source)}</span>
     }
   ];
 

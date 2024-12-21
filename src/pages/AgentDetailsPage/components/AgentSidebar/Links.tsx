@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExternalLink, Github, Twitter, MessageCircle } from 'lucide-react';
+import { ExternalLink, Github, Twitter, Facebook, Linkedin, MessageCircle } from 'lucide-react';
 import { Agent } from '../../../../types';
 import GradientCard from '../../../../components/common/GradientCard';
 
@@ -10,8 +10,14 @@ interface LinksProps {
 export default function Links({ agent }: LinksProps) {
   const links = [
     { icon: ExternalLink, label: 'Website', url: agent.url },
-    ...(agent.githubUrl ? [{ icon: Github, label: 'GitHub Repository', url: agent.githubUrl }] : []),
-  ];
+    ...(agent.githubUrl ? [{ icon: Github, label: 'GitHub', url: agent.githubUrl }] : []),
+    ...(agent.twitterUrl ? [{ icon: Twitter, label: 'Twitter', url: agent.twitterUrl }] : []),
+    ...(agent.facebookUrl ? [{ icon: Facebook, label: 'Facebook', url: agent.facebookUrl }] : []),
+    ...(agent.linkedinUrl ? [{ icon: Linkedin, label: 'LinkedIn', url: agent.linkedinUrl }] : []),
+    ...(agent.discordUrl ? [{ icon: MessageCircle, label: 'Discord', url: agent.discordUrl }] : [])
+  ].filter(link => link.url);
+
+  if (links.length === 0) return null;
 
   return (
     <GradientCard>
