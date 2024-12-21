@@ -2,7 +2,6 @@ import React from 'react';
 import { Agent } from '../../../../types';
 import AgentImage from './AgentImage';
 import AgentInfo from './AgentInfo';
-import AgentStats from './AgentStats';
 
 interface AgentHeaderProps {
   agent: Agent;
@@ -19,7 +18,6 @@ export default function AgentHeader({ agent }: AgentHeaderProps) {
           <AgentImage imageUrl={agent.imageUrl} name={agent.name} />
           <AgentInfo agent={agent} />
         </div>
-        <AgentStats />
       </div>
     </div>
   );

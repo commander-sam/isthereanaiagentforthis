@@ -1,8 +1,7 @@
 import React from 'react';
-import { ExternalLink, Star } from 'lucide-react';
+import { ExternalLink, Award } from 'lucide-react';
 import { Agent } from '../../../../types';
 import ActionButton from '../../../../components/common/ActionButton';
-import ShareButton from '../../../../components/common/ShareButton';
 import CategoryBadge from '../../../../components/common/CategoryBadge';
 
 interface AgentInfoProps {
@@ -28,15 +27,12 @@ export default function AgentInfo({ agent }: AgentInfoProps) {
           label="Visit Website"
           href={agent.url}
         />
-        <ShareButton 
-          url={window.location.href} 
-          title={agent.name} 
-        />
-        <ActionButton
-          icon={Star}
-          label="Save"
-          onClick={() => {}}
-        />
+        {agent.featured && (
+          <div className="flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white">
+            <Award className="h-5 w-5 mr-2" />
+            Featured Agent
+          </div>
+        )}
       </div>
     </div>
   );
