@@ -1,4 +1,5 @@
 import { AgentFormData } from '../types/admin';
+import { supabase } from '../lib/supabase';
 
 // Parse a CSV line respecting quotes
 const parseCSVLine = (line: string): string[] => {
@@ -41,6 +42,7 @@ const headerMappings: Record<string, string[]> = {
   pricing: ['pricing', 'price', 'pricingmodel', 'cost'],
   contactEmail: ['contactemail', 'email', 'contact'],
   websiteUrl: ['websiteurl', 'website', 'url', 'link'],
+  category: ['category', 'categoryid', 'type'],
   githubUrl: ['githuburl', 'github'],
   twitterUrl: ['twitterurl', 'twitter'],
   facebookUrl: ['facebookurl', 'facebook'],
@@ -50,8 +52,15 @@ const headerMappings: Record<string, string[]> = {
 
 export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
   try {
+    // First, fetch valid categories
+    const { data: categories, error: categoriesError } = await supabase
+      .from('categories')
+      .select('id');
+    
+    if (categoriesError) throw new Error('Failed to fetch categories');
+    const validCategories = new Set(categories.map(c => c.id));
+
     const text = await file.text();
-    // Split by newlines but handle both \n and \r\n
     const lines = text.split(/\r?\n/);
     
     if (lines.length < 2) {
@@ -72,7 +81,7 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     }
 
     // Validate required fields
-    const missingFields = ['name', 'shortDescription', 'source', 'pricing', 'contactEmail', 'websiteUrl']
+    const missingFields = ['name', 'shortDescription', 'source', 'pricing', 'contactEmail', 'websiteUrl', 'category']
       .filter(field => !columnMap.has(field));
 
     if (missingFields.length > 0) {
@@ -80,18 +89,21 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     }
 
     // Parse rows
-    return lines.slice(1)
+    const errors: string[] = [];
+    const agents = lines.slice(1)
       .filter(line => line.trim())
-      .map(line => {
+      .map((line, index) => {
         const values = parseCSVLine(line);
         const agent: AgentFormData = {
           name: '',
           shortDescription: '',
+          description: '',
           logo: null,
           source: 'closed_source',
           pricing: 'free',
           contactEmail: '',
           websiteUrl: '',
+          category: 'chatbots',
           githubUrl: '',
           twitterUrl: '',
           facebookUrl: '',
@@ -102,14 +114,25 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
         // Map values to fields
         for (const [field, index] of columnMap.entries()) {
           if (values[index]) {
-            // Remove surrounding quotes if they exist
             const value = values[index].replace(/^"|"$/g, '');
+            
+            // Validate category
+            if (field === 'category' && !validCategories.has(value)) {
+              errors.push(`Row ${index + 1}: Invalid category "${value}". Must be one of: ${Array.from(validCategories).join(', ')}`);
+            }
+            
             (agent as any)[field] = value;
           }
         }
         
         return agent;
       });
+
+    if (errors.length > 0) {
+      throw new Error(`Validation errors:\n${errors.join('\n')}`);
+    }
+
+    return agents;
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`Error parsing CSV file: ${error.message}`);

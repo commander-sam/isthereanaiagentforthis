@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
+import { useAnimatedPlaceholder } from '../hooks/useAnimatedPlaceholder';
 
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const placeholderText = useAnimatedPlaceholder();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/tools?search=${encodeURIComponent(searchQuery)}`);
+      navigate(`/agents?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -34,7 +36,7 @@ export default function Hero() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="writing blog posts..."
+                  placeholder={placeholderText}
                   className="w-full px-6 py-4 text-xl md:text-2xl bg-white/10 backdrop-blur-xl border-2 border-white/20 rounded-full text-white placeholder-blue-200/70 focus:outline-none focus:border-white/40 transition-all"
                 />
               </div>
