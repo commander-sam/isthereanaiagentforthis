@@ -1,4 +1,7 @@
-import { AgentPricing, AgentSource, AgentStatus } from './enums';
+export interface Feature {
+  title: string;
+  description: string;
+}
 
 export interface Agent {
   id: string;
@@ -14,6 +17,12 @@ export interface Agent {
   source: AgentSource;
   submittedAt: string;
   githubUrl?: string;
+  twitterUrl?: string;
+  facebookUrl?: string;
+  linkedinUrl?: string;
+  discordUrl?: string;
+  features?: Feature[];
+  useCases?: string[];
 }
 
 // Re-export enum types for convenience

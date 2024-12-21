@@ -1,6 +1,5 @@
 import React from 'react';
 import { Agent } from '../../../../types';
-import GradientCard from '../../../../components/common/GradientCard';
 import Description from './Description';
 import Features from './Features';
 import UseCases from './UseCases';
@@ -13,8 +12,8 @@ export default function AgentContent({ agent }: AgentContentProps) {
   return (
     <div className="space-y-8">
       <Description agent={agent} />
-      <Features />
-      <UseCases />
+      {agent.features && <Features features={agent.features} />}
+      {agent.useCases && <UseCases useCases={agent.useCases} />}
     </div>
   );
 }
