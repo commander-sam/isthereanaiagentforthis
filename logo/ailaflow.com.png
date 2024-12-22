@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>VisioPilot - AI Browser Automation Chat</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link href="https://fonts.cdnfonts.com/css/general-sans?styles=135312,135310,135313,135303" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet" />
+		<link rel="icon" type="image/png" sizes="32x32" href="favicon.ico" />
+		<link href="index.css" rel="stylesheet" />
+		<script src="main.js"></script>
+
+		<meta
+			name="description"
+			content="AI browser automation chat that accelerates and automates daily work. Build custom AI agents using no-code that get the job done."
+		/>
+
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content="VisioPilot - AI Browser Automation Chat" />
+		<meta
+			property="og:description"
+			content="AI browser automation chat that accelerates and automates daily work. Build custom AI agents using no-code that get the job done."
+		/>
+		<meta property="og:image" content="https://visiopilot.com/images/social-card.jpg" />
+
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content="VisioPilot - AI Browser Automation Chat" />
+		<meta
+			name="twitter:description"
+			content="AI browser automation chat that accelerates and automates daily work. Build custom AI agents using no-code that get the job done."
+		/>
+		<meta name="twitter:image" content="https://visiopilot.com/images/social-card.png" />
+	</head>
+	<body class="antialiased bg-body text-body font-body">
+		<header class="relative">
+			<div class="container mx-auto overflow-hidden">
+				<div class="relative z-20 flex items-center justify-between px-4 py-5 bg-transparent">
+					<div class="w-auto">
+						<div class="flex flex-wrap items-center">
+							<div class="w-auto mr-14">
+								<a href="./">
+									<img src="./images/logo.png" width="200" title="VisioPilot" class="align-middle" />
+								</a>
+							</div>
+							<div class="w-auto hidden lg:block">
+								<ul class="flex items-center mr-16">
+									<li class="font-medium hover:text-gray-700"><a href="./use-cases">Use Cases</a></li>
+									<li class="font-medium hover:text-gray-700 ml-6"><a href="./online-demos">Online Demos</a></li>
+									<li class="font-medium hover:text-gray-700 ml-6"><a href="./pricing">Pricing</a></li>
+									<li class="font-medium hover:text-gray-700 ml-6"><a href="./local-llm">Local LLM</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="w-auto">
+						<div class="flex flex-wrap items-center">
+							<div class="w-auto hidden lg:block">
+								<div class="inline-block">
+									<a href="https://platform.visiopilot.com/" class="py-3 px-5 w-full font-semibold border hover:border-gray-300 rounded-xl focus:ring focus:ring-gray-50 bg-white hover:bg-gray-50 transition ease-in-out duration-200">Sign In</a>
+								</div>
+							</div>
+							<div class="w-auto lg:hidden">
+								<a href="#">
+									<svg class="navbar-burger text-blue-700" width="51" height="51" viewbox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<rect width="56" height="56" rx="28" fill="currentColor"></rect>
+										<path d="M37 32H19M37 24H19" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+									</svg>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hidden navbar-menu fixed top-0 left-0 bottom-0 w-4/6 sm:max-w-xs z-50">
+					<div class="navbar-backdrop fixed inset-0 bg-gray-800 opacity-80"></div>
+					<nav class="relative z-10 px-9 pt-8 bg-white h-full overflow-y-auto">
+						<div class="flex flex-wrap justify-between h-full">
+							<div class="w-full">
+								<div class="flex items-center justify-between -m-2">
+									<div class="w-auto p-2">
+										<a class="inline-block" href="/">
+										<img src="./images/logo.png" width="200" title="VisioPilot" class="align-middle" /></a>
+									</div>
+									<div class="w-auto p-2">
+										<a class="navbar-burger" href="#">
+											<svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<path d="M6 18L18 6M6 6L18 18" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+											</svg></a>
+										</div>
+								</div>
+							</div>
+							<div class="flex flex-col justify-center py-16 w-full">
+								<ul>
+									<li class="mb-12"><a class="font-medium hover:text-gray-700" href="./use-cases">Use Cases</a></li>
+									<li class="mb-12"><a class="font-medium hover:text-gray-700" href="./online-demos">Online Demos</a></li>
+									<li class="mb-12"><a class="font-medium hover:text-gray-700" href="./local-llm">Local LLM</a></li>
+									<li><a class="font-medium hover:text-gray-700" href="./pricing">Pricing</a></li>
+								</ul>
+							</div>
+							<div class="flex flex-col justify-end w-full pb-8">
+								<div class="flex flex-wrap">
+									<div class="w-full">
+										<div class="block">
+											<a href="https://platform.visiopilot.com/" class="py-3 px-5 w-full font-semibold border hover:border-gray-300 rounded-xl focus:ring focus:ring-gray-50 bg-white hover:bg-gray-50 transition ease-in-out duration-200 block">Sign In</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</nav>
+				</div>
+			</div>
+		</header>
+<section class="relative">
+	<div class="relative z-20 overflow-hidden pt-12 pb-12">
+		<div class="container px-4 mx-auto">
+			<div class="flex flex-wrap xl:items-center -m-8">
+				<div class="w-full md:w-1/2 xl:w-auto p-8 xl:p-12">
+					<div class="md:inline-block relative">
+						<div class="overflow-hidden rounded-lg">
+							<img
+								width="560"
+								src="images/slogan-image.jpg"
+								alt=""
+							/>
+						</div>
+					</div>
+				</div>
+				<div class="w-full md:w-1/2 xl:flex-1 p-8 xl:p-12">
+					<div class="xl:max-w-2xl" id="joinWaitlist">
+						<h1 class="mb-7 text-6xl md:text-7xl font-bold font-heading tracking-px-n leading-none">
+							AI Browser Automation Chat
+						</h1>
+						<p class="mb-6 text-lg text-gray-900 font-medium md:max-w-md">
+							Install our <span class="bg-blue-100 font-mono px-2 py-1 rounded-md">browser extension</span> to
+							accelerate and automate your browser tasks on any website using chat agents.
+						</p>
+
+						<p class="mb-6 text-lg text-gray-900 font-medium md:max-w-md">
+							Import chat agents from ready-to-use templates or create your own with our no-code editor. Customize the automation to fit your needs.
+						</p>
+
+						<p class="mb-6">
+							<a
+								href="./use-cases"
+								class="text-blue-600 text-lg font-bold hover:text-blue-800"
+								>&rarr; Use Cases</a
+							><br />
+							<a
+								href="./online-demos"
+								class="text-blue-600 text-lg font-bold hover:text-blue-800"
+								>&rarr; Online Demos</a
+							>
+						</p>
+
+						<div class="mb-6">
+							<span class="font-mono text-sm px-2 py-1 rounded-md" style="background: #F0CE88;">
+								VisioPilot with a local LLM server is completely free now.
+							</span>
+						</div>
+
+						<div>
+							<a
+								class="py-4 mr-2 my-4 px-7 text-white font-semibold rounded-xl focus:ring focus:ring-stone-300 bg-blue-700 hover:bg-blue-800 transition ease-in-out duration-200 inline-block whitespace-nowrap"
+								href="https://addons.mozilla.org/en-US/firefox/addon/visiopilot/"
+								target="_blank"
+							>
+								Install for Firefox
+							</a>
+
+							<a
+								class="py-4 my-2 px-7 text-white font-semibold rounded-xl focus:ring focus:ring-stone-300 bg-blue-700 hover:bg-blue-800 transition ease-in-out duration-200 inline-block whitespace-nowrap"
+								href="https://chromewebstore.google.com/detail/visiopilot/kpkalljnibhiahfgkbgkgjibpeinfmpa"
+								target="_blank"
+							>
+								Install for Chrome
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="py-20 bg-white overflow-hidden">
+	<div class="container px-4 mx-auto">
+		<div class="flex flex-wrap items-center -m-8">
+			<div class="w-full md:w-1/3 p-8">
+				<div class="md:max-w-sm">
+					<div class="flex flex-wrap items-center -m-3">
+						<div class="w-auto p-3">
+							<div class="flex items-center justify-center w-20 h-20 bg-stone-100 rounded-full">
+								<img src="images/icon-no-devs.svg" alt="" />
+							</div>
+						</div>
+						<div class="flex-1 p-3">
+							<h3 class="text-xl font-semibold">Develop chats with AI agent by using No-Code editor</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="w-full md:w-1/3 p-8">
+				<div class="md:max-w-sm">
+					<div class="flex flex-wrap items-center -m-3">
+						<div class="w-auto p-3">
+							<div class="flex items-center justify-center w-20 h-20 bg-stone-100 rounded-full">
+								<img src="images/icon-web.svg" alt="" />
+							</div>
+						</div>
+						<div class="flex-1 p-3">
+							<h3 class="text-xl font-semibold">
+								Create automatic or semi-automatic chat conversations that get the job done
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="w-full md:w-1/3 p-8">
+				<div class="md:max-w-sm">
+					<div class="flex flex-wrap items-center -m-3">
+						<div class="w-auto p-3">
+							<div class="flex items-center justify-center w-20 h-20 bg-stone-100 rounded-full">
+								<img src="images/icon-template.svg" alt="" />
+							</div>
+						</div>
+						<div class="flex-1 p-3">
+							<h3 class="text-xl font-semibold">
+								Easily import chat templates from the community or create your own
+							</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+<section class="relative pt-28 pb-32 bg-stone-700 overflow-hidden">
+	<img class="absolute top-0 left-1/2 transform -transtone-x-1/2" src="images/number-gradient.svg" alt="" />
+	<div class="relative z-10 container px-4 mx-auto">
+		<div class="mb-24 border-b border-white border-opacity-10">
+			<h2 class="pb-24 text-4xl sm:text-7xl text-white font-bold tracking-px-n leading-none md:max-w-3xl">
+				Daily Collaboration with AI
+			</h2>
+		</div>
+		<div class="flex flex-wrap -m-8">
+			<div class="w-full md:w-1/3 p-8">
+				<p class="mb-6 text-gray-200 font-semibold leading-normal">Speed up your job</p>
+				<h3 class="mb-4 text-6xl md:text-8xl xl:text-10xl text-white font-bold tracking-px-n leading-none">8x</h3>
+				<p class="text-gray-300 font-medium leading-relaxed md:w-56">
+					Get your work done 8 times faster with AI automation.
+				</p>
+			</div>
+			<div class="w-full md:w-1/3 p-8">
+				<p class="mb-6 text-gray-200 font-semibold leading-normal">
+					Faster deployment
+				</p>
+				<h3 class="mb-4 text-6xl md:text-8xl xl:text-10xl text-white font-bold tracking-px-n leading-none">15x</h3>
+				<p class="text-gray-300 font-medium leading-relaxed md:w-56">
+					Design the automation, test it immediately, and see the results.
+				</p>
+			</div>
+			<div class="w-full md:w-1/3 p-8">
+				<p class="mb-6 text-gray-200 font-semibold leading-normal">
+					Cheaper than hiring developer
+				</p>
+				<h3 class="mb-4 text-6xl md:text-8xl xl:text-10xl text-white font-bold tracking-px-n leading-none">50x</h3>
+				<p class="text-gray-300 font-medium leading-relaxed md:w-56">
+					You don't need a developer who programs in Selenium; just use a no-code editor.
+				</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+		<script>
+			function contact() {
+				const m = String.fromCharCode(64);
+				window.location.href = 'mailto:office' + m + 'n4no.com?subject=VisioPilot';
+			}
+		</script>
+		<footer class="relative pt-28 pb-32 bg-stone-800 overflow-hidden">
+			<img class="absolute left-1/2 top-0 transform -transtone-x-1/2" src="images/footer-gradient.svg" alt="" />
+			<div class="relative z-10 container px-4 mx-auto text-center">
+				<div class="flex flex-wrap -m-8">
+					<div class="w-full md:w-1/2 p-8 mx-auto">
+						<div class="flex flex-wrap -m-8 mb-10">
+							<div class="w-full sm:w-1/2 p-8">
+								<ul>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="./privacy-policy"
+											>Privacy Policy</a
+										>
+									</li>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="./pricing"
+											>Pricing</a
+										>
+									</li>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="javascript:contact();"
+											>Contact</a
+										>
+									</li>
+								</ul>
+							</div>
+							<div class="w-full sm:w-1/2 p-8">
+								<ul>
+									<li class="mb-3.5">
+										<a class="text-white hover:text-gray-200 font-medium leading-relaxed" href="https://n4no.com/"
+											>N4NO.com</a
+										>
+									</li>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="https://github.com/visiopilot"
+											>GitHub</a
+										>
+									</li>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="https://x.com/b4rtaz"
+											>X</a
+										>
+									</li>
+									<li class="mb-3.5">
+										<a
+											class="text-white hover:text-gray-200 font-medium leading-relaxed"
+											href="https://visiopilot.com/discord"
+											>Discord</a
+										>
+									</li>
+								</ul>
+							</div>
+						</div>
+						<span class="text-sm text-white text-opacity-50 font-medium leading-relaxed">
+							Copyright &reg; 2024 VisioPilot.com, made by N4NO.com
+						</span>
+					</div>
+				</div>
+			</div>
+		</footer>
+
+		<!-- analytics -->
+		<script>
+			const isLocalhost = ['127.0.0.1', 'localhost'].includes(location.hostname);
+			if (!isLocalhost) {
+				const script = document.createElement('script');
+				script.src = 'https://www.googletagmanager.com/gtag/js?id=G-NDYVVYS81V';
+				script.async = true;
+				document.head.appendChild(script);
+				window.dataLayer = window.dataLayer || [];
+				function gtag() {
+					dataLayer.push(arguments);
+				}
+				gtag('js', new Date());
+				gtag('config', 'G-NDYVVYS81V');
+			}
+		</script>
+		<!-- /analytics -->
+	</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="Web scraping made easy — a powerful and free Chrome extension for scraping websites in your browser, automated in the cloud, or via API. No code required.">
+    <meta name="keywords" content="Web scraper, free web scraper, online web scraper, best web scraper, nocode web scraper, simple web scraper, data extraction, scraper API, chrome extension">
+    <!-- social media -->
+    <meta property="og:title" content="Simplescraper — Scrape Websites and turn them into APIs">
+    <meta property="og:description" content="The easiest way to scrape the web — a fast, free, and easy to use Chrome extension for scraping websites in your browser or automated in the cloud.">
+    <meta property="og:image" content="https://simplescraper.io/easy_scraper_social.png?1">
+    <meta property="og:url" content="https://simplescraper.io/">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="canonical" href="https://simplescraper.io">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico"> <!-- Updated favicon path -->
+    <!-- <link rel="icon" type="image/x-icon" href="<%= BASE_URL %>favicon.ico"> -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+      
+    </script>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-149836906-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-149836906-1');
+    </script>
+
+    <script type="text/javascript">
+    // on large screens
+    if (!window.matchMedia("(max-width: 50em)").matches) {
+        window.$crisp=[];window.CRISP_WEBSITE_ID="9f1e06d6-ac8d-4c61-84e7-aab8e2c88ace";(function(){d=document;s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();
+    }
+    </script>
+    <title>Simplescraper — Scrape Websites and turn them into APIs</title>
+    <script type="module" crossorigin src="/assets/main-BUQJnVVz.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/main-DSoOnnSh.css">
+  </head>
+  <body>
+    <noscript>
+      <strong>Simplescraper doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>

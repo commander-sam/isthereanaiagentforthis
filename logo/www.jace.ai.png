@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Jace AI - Your intelligent email assistant that understands your personality. Write emails faster, schedule meetings seamlessly, and communicate more effectively." />
+    <title>Jace AI | Email Assistant That Understands Your Voice</title>
+    <script type="module" crossorigin src="/assets/index-Dlfz66TL.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-C7BZRIdV.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
