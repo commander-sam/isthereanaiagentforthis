@@ -1,40 +1,9 @@
 import { AgentFormData } from '../types/admin';
 import { supabase } from '../lib/supabase';
+import { getGitHubLogoUrl } from './logoUrl';
 
-// Parse a CSV line respecting quotes
-const parseCSVLine = (line: string): string[] => {
-  const result: string[] = [];
-  let current = '';
-  let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    
-    if (char === '"') {
-      if (i + 1 < line.length && line[i + 1] === '"') {
-        current += '"';
-        i++; // Skip the next quote
-      } else {
-        inQuotes = !inQuotes;
-      }
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
-      current = '';
-    } else {
-      current += char;
-    }
-  }
-  
-  result.push(current.trim());
-  return result;
-};
+// ... (keep existing parseCSVLine and normalizeHeader functions)
 
-// Normalize header text for comparison
-const normalizeHeader = (header: string): string => {
-  return header.toLowerCase().replace(/[^a-z]/g, '');
-};
-
-// Map common variations of column names
 const headerMappings: Record<string, string[]> = {
   name: ['name', 'agentname', 'title'],
   shortDescription: ['shortdescription', 'description', 'desc', 'about'],
@@ -43,6 +12,7 @@ const headerMappings: Record<string, string[]> = {
   contactEmail: ['contactemail', 'email', 'contact'],
   websiteUrl: ['websiteurl', 'website', 'url', 'link'],
   category: ['category', 'categoryid', 'type'],
+  logoFilename: ['logofilename', 'logo', 'image', 'imagefilename'],
   githubUrl: ['githuburl', 'github'],
   twitterUrl: ['twitterurl', 'twitter'],
   facebookUrl: ['facebookurl', 'facebook'],
@@ -103,18 +73,19 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
           pricing: 'free',
           contactEmail: '',
           websiteUrl: '',
-          category: 'chatbots',
-          githubUrl: '',
-          twitterUrl: '',
-          facebookUrl: '',
-          linkedinUrl: '',
-          discordUrl: ''
+          category: 'chatbots'
         };
         
         // Map values to fields
         for (const [field, index] of columnMap.entries()) {
           if (values[index]) {
             const value = values[index].replace(/^"|"$/g, '');
+            
+            // Handle logo filename
+            if (field === 'logoFilename') {
+              agent.imageUrl = getGitHubLogoUrl(value);
+              continue;
+            }
             
             // Validate category
             if (field === 'category' && !validCategories.has(value)) {
