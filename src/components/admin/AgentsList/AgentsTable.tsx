@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Agent, AgentStatus } from '../../../types';
 import AgentListItem from './AgentListItem';
-import Pagination from './Pagination';
+import Pagination from '../../common/pagination/Pagination';
 import { usePagination } from '../../../hooks/usePagination';
 
 interface AgentsTableProps {

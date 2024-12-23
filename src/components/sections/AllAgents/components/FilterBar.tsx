@@ -1,6 +1,6 @@
 import React from 'react';
-import { filters } from '../config/filters';
 import FilterItem from './FilterItem';
+import { useFilters } from '../config/filters';
 
 interface FilterBarProps {
   activeFilter: string;
@@ -8,6 +8,8 @@ interface FilterBarProps {
 }
 
 export default function FilterBar({ activeFilter, onFilterChange }: FilterBarProps) {
+  const filters = useFilters();
+
   return (
     <div className="flex flex-wrap gap-3 mb-8">
       {filters.map((filter) => (

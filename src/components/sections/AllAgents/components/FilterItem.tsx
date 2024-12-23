@@ -1,15 +1,18 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
+import * as Icons from 'lucide-react';
 
 interface FilterItemProps {
-  icon: LucideIcon;
+  icon: string;
   label: string;
   isActive: boolean;
   onClick: () => void;
   color: string;
 }
 
-export default function FilterItem({ icon: Icon, label, isActive, onClick, color }: FilterItemProps) {
+export default function FilterItem({ icon, label, isActive, onClick, color }: FilterItemProps) {
+  // Get the icon component from lucide-react
+  const Icon = Icons[icon as keyof typeof Icons] || Icons.Sparkles;
+
   return (
     <button
       onClick={onClick}
