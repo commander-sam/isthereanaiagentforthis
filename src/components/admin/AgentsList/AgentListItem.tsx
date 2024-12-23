@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Agent, AgentStatus } from '../../../types';
+import { ChevronDown, ChevronUp, Star } from 'lucide-react';
 import EditAgentButton from '../actions/EditAgentButton';
 import DeleteAgentButton from '../actions/DeleteAgentButton';
 import StatusBadge from '../list/StatusBadge';
 import StatusActions from '../list/StatusActions';
-import { Star } from 'lucide-react';
 
 interface AgentListItemProps {
   agent: Agent;
@@ -25,8 +25,10 @@ export default function AgentListItem({
   isSelected,
   onSelectionChange
 }: AgentListItemProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
-    <tr className="group hover:bg-gray-800/50 transition-colors">
+    <tr className="hover:bg-gray-800/50 transition-colors">
       <td className="px-6 py-4">
         <input
           type="checkbox"
@@ -45,9 +47,32 @@ export default function AgentListItem({
               alt={agent.name} 
             />
           </div>
-          <div className="ml-4">
+          <div className="ml-4 max-w-[24rem]">
             <div className="text-sm font-medium text-white">{agent.name}</div>
-            <div className="text-sm text-gray-400">{agent.shortDescription}</div>
+            <div className="text-sm text-gray-400 truncate">
+              {agent.shortDescription}
+            </div>
+            {isExpanded && (
+              <div className="mt-2 text-sm text-gray-400 max-h-24 overflow-y-auto">
+                <div dangerouslySetInnerHTML={{ __html: agent.description }} />
+              </div>
+            )}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="mt-1 text-xs text-blue-400 hover:text-blue-300 flex items-center"
+            >
+              {isExpanded ? (
+                <>
+                  <ChevronUp className="h-3 w-3 mr-1" />
+                  Show less
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-3 w-3 mr-1" />
+                  Show more
+                </>
+              )}
+            </button>
           </div>
         </div>
       </td>
@@ -60,7 +85,7 @@ export default function AgentListItem({
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex space-x-2">
           <button
             onClick={() => onToggleFeatured(agent.id)}
             className={`p-1 rounded transition-colors ${

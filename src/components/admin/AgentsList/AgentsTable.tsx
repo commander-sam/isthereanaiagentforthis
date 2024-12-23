@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Agent, AgentStatus } from '../../../types';
 import AgentListItem from './AgentListItem';
+import Pagination from './Pagination';
+import { usePagination } from '../../../hooks/usePagination';
 
 interface AgentsTableProps {
   agents: Agent[];
@@ -12,6 +14,8 @@ interface AgentsTableProps {
   onSelectionChange: (ids: string[]) => void;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export default function AgentsTable({ 
   agents = [], 
   onEdit, 
@@ -21,9 +25,17 @@ export default function AgentsTable({
   selectedAgents,
   onSelectionChange
 }: AgentsTableProps) {
+  const [page, setPage] = useState(1);
+  const { currentItems, currentPage, totalPages, goToPage } = usePagination(
+    agents,
+    page,
+    ITEMS_PER_PAGE,
+    setPage
+  );
+
   const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
-      onSelectionChange(agents.map(agent => agent.id));
+      onSelectionChange(currentItems.map(agent => agent.id));
     } else {
       onSelectionChange([]);
     }
@@ -39,7 +51,7 @@ export default function AgentsTable({
               <th className="px-6 py-3">
                 <input
                   type="checkbox"
-                  checked={selectedAgents.length === agents.length}
+                  checked={currentItems.length > 0 && currentItems.every(agent => selectedAgents.includes(agent.id))}
                   onChange={handleSelectAll}
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
@@ -59,7 +71,7 @@ export default function AgentsTable({
             </tr>
           </thead>
           <tbody className="bg-gray-900/50 backdrop-blur-xl divide-y divide-gray-800">
-            {agents.map((agent) => (
+            {currentItems.map((agent) => (
               <AgentListItem
                 key={agent.id}
                 agent={agent}
@@ -79,6 +91,13 @@ export default function AgentsTable({
             ))}
           </tbody>
         </table>
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={goToPage}
+          />
+        )}
       </div>
     </div>
   );

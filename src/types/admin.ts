@@ -4,7 +4,7 @@ export interface AgentFormData {
   name: string;
   shortDescription: string;
   description: string;
-  logo: File | null;
+  imageUrl?: string;
   source: AgentSource;
   pricing: AgentPricing;
   contactEmail: string;
@@ -16,8 +16,9 @@ export interface AgentFormData {
   discordUrl?: string;
   category?: string;
   featured?: boolean;
-  imageUrl?: string;
   status?: AgentStatus;
+  features?: Array<{ title: string; description: string }>;
+  useCases?: string[];
 }
 
 export interface AgentFormErrors {

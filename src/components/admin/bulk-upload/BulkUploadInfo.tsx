@@ -16,7 +16,7 @@ export default function BulkUploadInfo() {
         <p className="text-xs text-gray-500">Source options: open_source, closed_source</p>
         <p className="text-xs text-gray-500">Pricing options: free, freemium, paid</p>
         <p className="text-xs text-gray-500">Category must be a valid category ID</p>
-        <p className="text-xs text-gray-500">logoFilename should be the name of the file in the GitHub Logo folder (e.g., "agent-name.png")</p>
+        <p className="text-xs text-gray-500">logoFilename should be the name of the file in the GitHub logo folder (e.g., "chatgpt.png")</p>
       </div>
     </div>
   );

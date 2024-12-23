@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ExternalLink, Star } from 'lucide-react';
 import { Agent } from '../types';
+import { getGitHubLogoUrl } from '../utils/logoUrl';
 
 interface AgentCardProps {
   agent: Agent;
@@ -22,9 +23,13 @@ export default function AgentCard({ agent }: AgentCardProps) {
             
             {/* Agent image */}
             <img
-              src={agent.imageUrl}
+              src={agent.imageUrl || getGitHubLogoUrl('default')}
               alt={agent.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                img.src = getGitHubLogoUrl('default');
+              }}
             />
             
             {/* Gradient overlay */}
