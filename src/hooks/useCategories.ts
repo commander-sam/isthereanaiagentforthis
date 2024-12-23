@@ -15,9 +15,25 @@ export function useCategories() {
           .select('*')
           .order('name');
 
-        if (error) throw error;
-        setCategories(data || []);
+        if (error) {
+          throw error;
+        }
+
+        if (!data) {
+          throw new Error('No categories found');
+        }
+
+        // Map the database response to our Category type
+        const mappedCategories: Category[] = data.map(category => ({
+          id: category.id,
+          name: category.name,
+          description: category.description,
+          icon: category.icon
+        }));
+
+        setCategories(mappedCategories);
       } catch (err) {
+        console.error('Error fetching categories:', err);
         setError(err instanceof Error ? err.message : 'Failed to fetch categories');
       } finally {
         setIsLoading(false);
@@ -25,6 +41,23 @@ export function useCategories() {
     };
 
     fetchCategories();
+
+    // Set up real-time subscription for category changes
+    const subscription = supabase
+      .channel('categories_changes')
+      .on('postgres_changes', 
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'categories' 
+        }, 
+        fetchCategories
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   return { categories, isLoading, error };

@@ -2,11 +2,8 @@ import { AgentFormData } from '../types/admin';
 import { supabase } from '../lib/supabase';
 import { getGitHubLogoUrl } from './logoUrl';
 
-// Parse a CSV line respecting quotes and handling different delimiters
+// Parse a CSV line respecting quotes and handling escaped quotes
 const parseCSVLine = (line: string): string[] => {
-  // Detect the delimiter (comma or tab)
-  const delimiter = line.includes('\t') ? '\t' : ',';
-  
   const result: string[] = [];
   let current = '';
   let inQuotes = false;
@@ -15,13 +12,15 @@ const parseCSVLine = (line: string): string[] => {
     const char = line[i];
     
     if (char === '"') {
+      // Handle escaped quotes (""")
       if (i + 1 < line.length && line[i + 1] === '"') {
         current += '"';
         i++; // Skip the next quote
       } else {
         inQuotes = !inQuotes;
       }
-    } else if ((char === delimiter) && !inQuotes) {
+    } else if (char === ',' && !inQuotes) {
+      // Only split on commas outside of quotes
       result.push(current.trim());
       current = '';
     } else {
@@ -30,7 +29,7 @@ const parseCSVLine = (line: string): string[] => {
   }
   
   result.push(current.trim());
-  return result;
+  return result.map(value => value.replace(/^"|"$/g, '')); // Remove surrounding quotes
 };
 
 // Normalize header text for comparison
@@ -60,13 +59,15 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     // First, fetch valid categories
     const { data: categories, error: categoriesError } = await supabase
       .from('categories')
-      .select('id');
+      .select('id, name');
     
     if (categoriesError) throw new Error('Failed to fetch categories');
-    const validCategories = new Set(categories.map(c => c.id));
+    
+    const validCategories = new Map(categories.map(c => [c.id, c.name]));
+    console.log('Valid categories:', Array.from(validCategories.keys())); // Debug log
 
     const text = await file.text();
-    const lines = text.split(/\r?\n/).filter(line => line.trim()); // Remove empty lines
+    const lines = text.split(/\r?\n/).filter(line => line.trim());
     
     if (lines.length < 2) {
       throw new Error('CSV file must contain at least a header row and one data row');
@@ -74,6 +75,7 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     
     // Parse and normalize headers
     const headers = parseCSVLine(lines[0]).map(h => normalizeHeader(h.trim()));
+    console.log('Parsed headers:', headers); // Debug log
     
     // Map headers to standardized field names
     const columnMap = new Map<string, number>();
@@ -100,6 +102,8 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
     const errors: string[] = [];
     const agents = lines.slice(1).map((line, index) => {
       const values = parseCSVLine(line);
+      console.log(`Row ${index + 1} values:`, values); // Debug log
+
       const agent: AgentFormData = {
         name: '',
         shortDescription: '',
@@ -115,7 +119,7 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
       // Map values to fields
       for (const [field, colIndex] of columnMap.entries()) {
         if (values[colIndex]) {
-          const value = values[colIndex].replace(/^"|"$/g, '').trim();
+          const value = values[colIndex].trim();
           
           // Handle logo filename
           if (field === 'logoFilename') {
@@ -125,17 +129,26 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
           
           // Validate category
           if (field === 'category' && !validCategories.has(value)) {
-            errors.push(`Row ${index + 2}: Invalid category "${value}". Must be one of: ${Array.from(validCategories).join(', ')}`);
+            errors.push(
+              `Row ${index + 2}: Invalid category "${value}". ` +
+              `Must be one of: ${Array.from(validCategories.keys()).join(', ')}`
+            );
           }
           
           // Validate source
           if (field === 'source' && !['open_source', 'closed_source'].includes(value)) {
-            errors.push(`Row ${index + 2}: Invalid source "${value}". Must be either "open_source" or "closed_source"`);
+            errors.push(
+              `Row ${index + 2}: Invalid source "${value}". ` +
+              'Must be either "open_source" or "closed_source"'
+            );
           }
           
           // Validate pricing
           if (field === 'pricing' && !['free', 'freemium', 'paid'].includes(value)) {
-            errors.push(`Row ${index + 2}: Invalid pricing "${value}". Must be one of: free, freemium, paid`);
+            errors.push(
+              `Row ${index + 2}: Invalid pricing "${value}". ` +
+              'Must be one of: free, freemium, paid'
+            );
           }
           
           (agent as any)[field] = value;
@@ -151,6 +164,7 @@ export const parseCsvFile = async (file: File): Promise<AgentFormData[]> => {
 
     return agents;
   } catch (error) {
+    console.error('CSV parsing error:', error); // Debug log
     if (error instanceof Error) {
       throw new Error(`Error parsing CSV file: ${error.message}`);
     }

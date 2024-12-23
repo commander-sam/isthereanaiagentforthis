@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Upload, X, AlertCircle } from 'lucide-react';
 import { AgentFormData } from '../../types/admin';
-import { parseCsvFile } from '../../utils/csvParser';
+import { parseCsvFile } from '../../utils/csv/parser';
 import BulkUploadInfo from './bulk-upload/BulkUploadInfo';
 import BulkUploadPreview from './bulk-upload/BulkUploadPreview';
 import GradientCard from '../common/GradientCard';
@@ -31,10 +31,19 @@ export default function BulkUpload({ onUpload, onClose }: BulkUploadProps) {
     setError('');
     
     try {
-      const agents = await parseCsvFile(selectedFile);
-      setPreview(agents);
+      const { data, errors } = await parseCsvFile(selectedFile);
+      
+      if (errors.length > 0) {
+        setError(errors.map(e => 
+          `Row ${e.row}: ${e.field} "${e.value}" - ${e.message}`
+        ).join('\n'));
+        setPreview([]);
+      } else {
+        setPreview(data);
+      }
     } catch (err) {
-      setError('Error parsing CSV file. Please check the format.');
+      setError(err instanceof Error ? err.message : 'Error parsing CSV file');
+      setPreview([]);
     }
   };
 
