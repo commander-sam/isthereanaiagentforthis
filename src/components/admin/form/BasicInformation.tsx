@@ -1,5 +1,5 @@
 import React from 'react';
-import FormInput from './fields/TextInput';
+import TextInput from './fields/TextInput';
 import RadioGroup from '../../form/RadioGroup';
 import CategorySelect from './CategorySelect';
 import { FORM_OPTIONS } from '../../../constants/form';

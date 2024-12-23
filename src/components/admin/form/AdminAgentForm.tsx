@@ -8,6 +8,7 @@ import FeaturesAndUseCases from './FeaturesAndUseCases';
 import GradientCard from '../../common/GradientCard';
 import { validateAgentForm } from '../../../utils/validation';
 import { DATABASE_ENUMS } from '../../../constants/database';
+import { getGitHubLogoUrl } from '../../../utils/logoUrl';
 
 interface AdminAgentFormProps {
   initialData?: Agent;
@@ -20,7 +21,7 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
     name: '',
     shortDescription: '',
     description: '',
-    logo: null,
+    imageUrl: '',
     source: DATABASE_ENUMS.SOURCE.CLOSED_SOURCE,
     pricing: DATABASE_ENUMS.PRICING.FREE,
     contactEmail: '',
@@ -33,13 +34,12 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
     status: DATABASE_ENUMS.STATUS.DRAFT,
     category: 'chatbots',
     featured: false,
-    imageUrl: '',
     features: [],
     useCases: []
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [logoPreview, setLogoPreview] = useState('');
+  const [logoFilename, setLogoFilename] = useState('');
 
   // Initialize form with existing data
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
         name: initialData.name,
         description: initialData.description,
         shortDescription: initialData.shortDescription,
-        logo: null,
+        imageUrl: initialData.imageUrl,
         source: initialData.source,
         pricing: initialData.pricing,
         contactEmail: initialData.contactEmail || '',
@@ -61,26 +61,29 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
         status: initialData.status,
         category: initialData.category,
         featured: initialData.featured || false,
-        imageUrl: initialData.imageUrl,
         features: initialData.features || [],
         useCases: initialData.useCases || []
       });
-      setLogoPreview(initialData.imageUrl);
+
+      // Extract filename from imageUrl if it exists
+      if (initialData.imageUrl) {
+        const filename = initialData.imageUrl.split('/').pop();
+        setLogoFilename(filename || '');
+      }
     }
   }, [initialData]);
 
-  const handleChange = (name: string, value: string | File | boolean) => {
+  const handleChange = (name: string, value: string | boolean | Array<any>) => {
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
 
-    if (name === 'logo' && value instanceof File) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(value);
+    // Handle logo filename changes
+    if (name === 'logoFilename') {
+      const logoUrl = value ? getGitHubLogoUrl(value as string) : '';
+      setFormData(prev => ({ ...prev, imageUrl: logoUrl }));
+      setLogoFilename(value as string);
     }
   };
 
@@ -94,12 +97,7 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
     }
 
     try {
-      const submissionData: AgentFormData = {
-        ...formData,
-        imageUrl: formData.logo ? logoPreview : initialData?.imageUrl || ''
-      };
-
-      await onSubmit(submissionData);
+      await onSubmit(formData);
     } catch (error) {
       console.error('Error submitting form:', error);
       setErrors({ submit: 'Failed to submit form. Please try again.' });
@@ -111,10 +109,9 @@ export default function AdminAgentForm({ initialData, onSubmit, onCancel }: Admi
       <GradientCard>
         <h3 className="text-xl font-medium text-white mb-6">Basic Information</h3>
         <BasicInformation
-          values={formData}
+          values={{ ...formData, logoFilename }}
           onChange={handleChange}
           errors={errors}
-          logoPreview={logoPreview}
         />
       </GradientCard>
 
