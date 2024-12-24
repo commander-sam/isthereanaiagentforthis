@@ -10,10 +10,14 @@ export function useCategories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
+        console.log('Fetching categories...'); // Debug log
+        
         const { data, error } = await supabase
           .from('categories')
           .select('*')
           .order('name');
+
+        console.log('Supabase response:', { data, error }); // Debug log
 
         if (error) throw error;
 
@@ -28,6 +32,8 @@ export function useCategories() {
           icon: category.icon
         }));
 
+        console.log('Mapped categories:', mappedCategories); // Debug log
+        
         setCategories(mappedCategories);
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -39,7 +45,6 @@ export function useCategories() {
 
     fetchCategories();
 
-    // Subscribe to changes
     const subscription = supabase
       .channel('categories_changes')
       .on('postgres_changes', 
