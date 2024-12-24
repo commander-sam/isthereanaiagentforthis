@@ -15,15 +15,12 @@ export function useCategories() {
           .select('*')
           .order('name');
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         if (!data) {
           throw new Error('No categories found');
         }
 
-        // Map the database response to our Category type
         const mappedCategories: Category[] = data.map(category => ({
           id: category.id,
           name: category.name,
@@ -42,7 +39,7 @@ export function useCategories() {
 
     fetchCategories();
 
-    // Set up real-time subscription for category changes
+    // Subscribe to changes
     const subscription = supabase
       .channel('categories_changes')
       .on('postgres_changes', 

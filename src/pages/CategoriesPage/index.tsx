@@ -1,32 +1,35 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCategories } from '../../hooks/useCategories';
-import { useAgents } from '../../hooks/useAgents';
 import CategoryCard from './components/CategoryCard';
 import PageTitle from '../../components/common/PageTitle';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 
 export default function CategoriesPage() {
-  const { categories, isLoading: loadingCategories, error: categoriesError } = useCategories();
-  const { agents, isLoading: loadingAgents, error: agentsError } = useAgents();
+  const { categories, isLoading, error } = useCategories();
 
-  if (loadingCategories || loadingAgents) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  if (categoriesError || agentsError) {
+  if (error) {
     return (
       <ErrorMessage 
         title="Error Loading Categories"
-        message={categoriesError || agentsError || 'Failed to load data'}
+        message={error}
       />
     );
   }
 
-  const getCategoryAgentCount = (categoryId: string) => {
-    return agents.filter(agent => agent.category === categoryId).length;
-  };
+  if (!categories.length) {
+    return (
+      <ErrorMessage 
+        title="No Categories Found"
+        message="No categories are currently available."
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 py-12">
@@ -36,7 +39,7 @@ export default function CategoriesPage() {
           subtitle="Explore our curated collection of AI agents by category"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map(category => (
             <Link 
               key={category.id}
@@ -45,7 +48,7 @@ export default function CategoriesPage() {
             >
               <CategoryCard 
                 category={category} 
-                agentCount={getCategoryAgentCount(category.id)}
+                agentCount={0} // We'll handle this count in a separate PR
               />
             </Link>
           ))}
