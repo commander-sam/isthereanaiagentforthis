@@ -9,7 +9,7 @@ interface CategoryCardProps {
 }
 
 export default function CategoryCard({ category, agentCount }: CategoryCardProps) {
-  // Get the icon component from lucide-react
+  // Get the icon component from lucide-react, fallback to Sparkles if not found
   const Icon = Icons[category.icon as keyof typeof Icons] || Icons.Sparkles;
 
   return (
