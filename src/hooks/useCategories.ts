@@ -8,6 +8,8 @@ export function useCategories() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const fetchCategories = async () => {
       try {
         console.log('Fetching categories...'); // Debug log
@@ -18,6 +20,8 @@ export function useCategories() {
           .order('name');
 
         console.log('Supabase response:', { data, error }); // Debug log
+
+        if (!mounted) return;
 
         if (error) throw error;
 
@@ -37,14 +41,19 @@ export function useCategories() {
         setCategories(mappedCategories);
       } catch (err) {
         console.error('Error fetching categories:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch categories');
+        if (mounted) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch categories');
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
     fetchCategories();
 
+    // Set up real-time subscription
     const subscription = supabase
       .channel('categories_changes')
       .on('postgres_changes', 
@@ -53,11 +62,17 @@ export function useCategories() {
           schema: 'public', 
           table: 'categories' 
         }, 
-        fetchCategories
+        () => {
+          if (mounted) {
+            fetchCategories();
+          }
+        }
       )
       .subscribe();
 
+    // Cleanup function
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
