@@ -12,7 +12,7 @@ export function usePaginatedAgents(
   agents: Agent[],
   page: number,
   setPage: (page: number) => void,
-  itemsPerPage: number = 9
+  itemsPerPage: number = 21
 ): UsePaginatedAgentsResult {
   const totalPages = Math.ceil(agents.length / itemsPerPage);
   const currentPage = Math.min(Math.max(1, page), totalPages);
