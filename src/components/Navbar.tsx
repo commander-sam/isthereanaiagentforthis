@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Settings } from 'lucide-react';
+import { Brain, Settings, Star } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -11,7 +11,7 @@ export default function Navbar() {
             <Link to="/" className="flex items-center">
               <Brain className="h-8 w-8 text-blue-400" />
               <span className="ml-2 text-xl font-semibold text-white">
-                Is There An AI Agent For This
+                AI Directory
               </span>
             </Link>
           </div>
@@ -27,6 +27,13 @@ export default function Navbar() {
             </Link>
             <Link to="/submit" className="text-gray-200 hover:text-blue-400">
               Submit an Agent
+            </Link>
+            <Link 
+              to="/feature" 
+              className="flex items-center text-gray-200 hover:text-blue-400"
+            >
+              <Star className="h-4 w-4 mr-1" />
+              Get Featured
             </Link>
             <Link 
               to="/admin" 

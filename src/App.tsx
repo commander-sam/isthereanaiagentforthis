@@ -8,7 +8,8 @@ import HomePage from './pages/HomePage';
 import AgentsPage from './pages/AgentsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import AgentDetailsPage from './pages/AgentDetailsPage';
-import SubmitAgentPage from './pages/SubmitToolPage';
+import SubmitAgentPage from './pages/SubmitAgentPage';
+import FeatureSubmissionPage from './pages/FeatureSubmissionPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLoginPage from './pages/AdminLoginPage';
 
@@ -25,6 +26,7 @@ export default function App() {
               <Route path="/categories" element={<CategoriesPage />} />
               <Route path="/agent/:id" element={<AgentDetailsPage />} />
               <Route path="/submit" element={<SubmitAgentPage />} />
+              <Route path="/feature" element={<FeatureSubmissionPage />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route
                 path="/admin"
