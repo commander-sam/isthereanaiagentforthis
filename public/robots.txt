@@ -1,0 +1,16 @@
+# https://isthereanaiagentforthis.com/robots.txt
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://isthereanaiagentforthis.com/sitemap.xml
+
+# Disallow admin routes
+Disallow: /admin/
+Disallow: /admin/login
+Disallow: /admin/dashboard
+
+# Crawl-delay for rate limiting
+Crawl-delay: 10
