@@ -21,7 +21,7 @@ export function useBlogPost(slug: string | undefined) {
           .from('blog_posts')
           .select(`
             *,
-            category:categories(name),
+            category:blog_categories(name),
             tags:blog_post_tags(
               tag:blog_tags(*)
             )
@@ -39,7 +39,10 @@ export function useBlogPost(slug: string | undefined) {
         // Fetch related posts
         const { data: relatedData, error: relatedError } = await supabase
           .from('blog_posts')
-          .select('*')
+          .select(`
+            *,
+            category:blog_categories(name)
+          `)
           .eq('category_id', data.category_id)
           .eq('status', 'published')
           .lte('published_at', new Date().toISOString())

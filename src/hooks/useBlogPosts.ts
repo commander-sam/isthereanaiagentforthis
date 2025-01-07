@@ -14,7 +14,7 @@ export function useBlogPosts() {
           .from('blog_posts')
           .select(`
             *,
-            category:categories(name),
+            category:blog_categories(name),
             tags:blog_post_tags(
               tag:blog_tags(*)
             )
