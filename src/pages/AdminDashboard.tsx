@@ -5,14 +5,15 @@ import { agentsManager } from '../utils/agentsManager';
 import AdminAgentForm from '../components/admin/form/AdminAgentForm';
 import AgentsList from '../components/admin/AgentsList';
 import BulkUpload from '../components/admin/BulkUpload';
-import { Plus, Upload } from 'lucide-react';
+import BlogPosts from './AdminDashboard/BlogPosts';
+import { Plus, Upload, FileText } from 'lucide-react';
 import ActionButton from '../components/common/ActionButton';
 import PageTitle from '../components/common/PageTitle';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useAdminAgents } from '../hooks/useAdminAgents';
 
-type View = 'list' | 'form' | 'bulk';
+type View = 'list' | 'form' | 'bulk' | 'blog';
 
 export default function AdminDashboard() {
   const { agents, isLoading, error: fetchError } = useAdminAgents();
@@ -138,6 +139,8 @@ export default function AdminDashboard() {
             onCancel={handleCancel}
           />
         );
+      case 'blog':
+        return <BlogPosts />;
       default:
         return (
           <AgentsList
@@ -158,8 +161,8 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <PageTitle 
-            title="Manage AI Agents"
-            subtitle="Add, edit, and manage your AI agent listings"
+            title="Admin Dashboard"
+            subtitle="Manage your AI agents and blog posts"
           />
           
           <div className="flex flex-wrap gap-4 mt-6">
@@ -167,7 +170,7 @@ export default function AdminDashboard() {
               icon={Upload}
               label="Bulk Upload"
               onClick={() => setCurrentView('bulk')}
-              className="bg-green-600 hover:bg-green-700 border-none"
+              className={`bg-green-600 hover:bg-green-700 border-none ${currentView === 'bulk' ? 'ring-2 ring-green-400' : ''}`}
             />
             <ActionButton
               icon={Plus}
@@ -176,7 +179,13 @@ export default function AdminDashboard() {
                 handleCancel();
                 setCurrentView('form');
               }}
-              className="bg-blue-600 hover:bg-blue-700 border-none"
+              className={`bg-blue-600 hover:bg-blue-700 border-none ${currentView === 'form' ? 'ring-2 ring-blue-400' : ''}`}
+            />
+            <ActionButton
+              icon={FileText}
+              label="Manage Blog"
+              onClick={() => setCurrentView('blog')}
+              className={`bg-purple-600 hover:bg-purple-700 border-none ${currentView === 'blog' ? 'ring-2 ring-purple-400' : ''}`}
             />
             {selectedAgents.length > 0 && (
               <ActionButton
