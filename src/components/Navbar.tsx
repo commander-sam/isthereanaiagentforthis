@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Brain, Settings, Star, Menu, X } from 'lucide-react';
+import { Brain, Settings, Star, Menu, X, FileText } from 'lucide-react';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,6 +44,9 @@ export default function Navbar() {
             </Link>
             <Link to="/categories" className="text-gray-200 hover:text-blue-400">
               Categories
+            </Link>
+            <Link to="/blog" className="flex items-center text-gray-200 hover:text-blue-400">
+              Blog
             </Link>
             <Link to="/submit" className="text-gray-200 hover:text-blue-400">
               Submit an Agent
@@ -90,6 +93,16 @@ export default function Navbar() {
               onClick={toggleMenu}
             >
               Categories
+            </Link>
+            <Link
+              to="/blog"
+              className="block px-3 py-2 text-gray-200 hover:text-blue-400"
+              onClick={toggleMenu}
+            >
+              <div className="flex items-center">
+                <FileText className="h-4 w-4 mr-1" />
+                Blog
+              </div>
             </Link>
             <Link
               to="/submit"

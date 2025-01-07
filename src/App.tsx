@@ -12,6 +12,8 @@ import SubmitAgentPage from './pages/SubmitAgentPage';
 import FeatureSubmissionPage from './pages/FeatureSubmissionPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLoginPage from './pages/AdminLoginPage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
 
 export default function App() {
   return (
@@ -27,6 +29,8 @@ export default function App() {
               <Route path="/agent/:id" element={<AgentDetailsPage />} />
               <Route path="/submit" element={<SubmitAgentPage />} />
               <Route path="/feature" element={<FeatureSubmissionPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/admin/login" element={<AdminLoginPage />} />
               <Route
                 path="/admin"
