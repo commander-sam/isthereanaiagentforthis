@@ -30,6 +30,11 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    editorProps: {
+      attributes: {
+        class: 'prose prose-invert max-w-none focus:outline-none min-h-[200px]',
+      },
+    },
   });
 
   if (!editor) {
@@ -39,7 +44,7 @@ export default function RichTextEditor({ content, onChange }: RichTextEditorProp
   return (
     <div className="border dark:border-gray-700 rounded-lg overflow-hidden">
       <EditorToolbar editor={editor} />
-      <div className="p-4 min-h-[200px] prose dark:prose-invert max-w-none">
+      <div className="p-4 bg-gray-900/50">
         <EditorContent editor={editor} />
       </div>
     </div>
