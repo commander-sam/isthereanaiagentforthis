@@ -3,6 +3,7 @@ import { Plus } from 'lucide-react';
 import { useAdminBlogPosts } from '../../../hooks/useAdminBlogPosts';
 import BlogPostsList from './components/BlogPostsList';
 import BlogPostForm from './components/BlogPostForm';
+import CategoryManager from './components/CategoryManager';
 import ActionButton from '../../../components/common/ActionButton';
 import LoadingSpinner from '../../../components/common/LoadingSpinner';
 import ErrorMessage from '../../../components/common/ErrorMessage';
@@ -43,13 +44,16 @@ export default function BlogPosts() {
           }}
         />
       ) : (
-        <BlogPostsList
-          posts={posts}
-          onEdit={(post) => {
-            setEditingPost(post);
-            setIsFormOpen(true);
-          }}
-        />
+        <>
+          <CategoryManager />
+          <BlogPostsList
+            posts={posts}
+            onEdit={(post) => {
+              setEditingPost(post);
+              setIsFormOpen(true);
+            }}
+          />
+        </>
       )}
     </div>
   );
