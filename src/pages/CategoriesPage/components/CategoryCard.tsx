@@ -4,11 +4,10 @@ import { Category } from '../../../types';
 import GradientCard from '../../../components/common/GradientCard';
 
 interface CategoryCardProps {
-  category: Category;
-  agentCount: number;
+  category: Category & { agent_count: number };
 }
 
-export default function CategoryCard({ category, agentCount }: CategoryCardProps) {
+export default function CategoryCard({ category }: CategoryCardProps) {
   // Get the icon component from lucide-react, fallback to Sparkles if not found
   const Icon = Icons[category.icon as keyof typeof Icons] || Icons.Sparkles;
 
@@ -24,7 +23,7 @@ export default function CategoryCard({ category, agentCount }: CategoryCardProps
               {category.name}
             </h3>
             <p className="text-sm text-blue-400">
-              {agentCount} {agentCount === 1 ? 'agent' : 'agents'}
+              {category.agent_count} {category.agent_count === 1 ? 'agent' : 'agents'}
             </p>
           </div>
         </div>

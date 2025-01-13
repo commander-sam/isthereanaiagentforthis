@@ -3,6 +3,14 @@ export interface Feature {
   description: string;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  agent_count?: number;
+}
+
 export interface Agent {
   id: string;
   name: string;

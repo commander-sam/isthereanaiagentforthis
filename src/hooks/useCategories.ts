@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { Category } from '../types';
 import { supabase } from '../lib/supabase';
 
+interface CategoryWithCount extends Category {
+  agent_count: number;
+}
+
 export function useCategories() {
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<CategoryWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -12,14 +16,13 @@ export function useCategories() {
 
     const fetchCategories = async () => {
       try {
-        console.log('Fetching categories...'); // Debug log
-        
+        // Fetch categories with agent counts
         const { data, error } = await supabase
           .from('categories')
-          .select('*')
-          .order('name');
-
-        console.log('Supabase response:', { data, error }); // Debug log
+          .select(`
+            *,
+            agents!agents_category_fkey(count)
+          `);
 
         if (!mounted) return;
 
@@ -29,14 +32,13 @@ export function useCategories() {
           throw new Error('No categories found');
         }
 
-        const mappedCategories: Category[] = data.map(category => ({
+        const mappedCategories: CategoryWithCount[] = data.map(category => ({
           id: category.id,
           name: category.name,
           description: category.description,
-          icon: category.icon
+          icon: category.icon,
+          agent_count: category.agents?.[0]?.count || 0
         }));
-
-        console.log('Mapped categories:', mappedCategories); // Debug log
         
         setCategories(mappedCategories);
       } catch (err) {

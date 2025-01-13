@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Agent } from '../../../types';
 import FilterBar from './components/FilterBar';
 import AgentGrid from './components/AgentGrid';
@@ -12,8 +13,16 @@ interface AllAgentsProps {
 }
 
 export default function AllAgents({ agents }: AllAgentsProps) {
-  const [activeFilter, setActiveFilter] = useState('all');
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get('category');
+  const [activeFilter, setActiveFilter] = useState(categoryParam || 'all');
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Update active filter when URL parameter changes
+  useEffect(() => {
+    setActiveFilter(categoryParam || 'all');
+    setCurrentPage(1); // Reset pagination when filter changes
+  }, [categoryParam]);
   
   const filteredAgents = useAgentFiltering(agents, activeFilter);
   const { 
