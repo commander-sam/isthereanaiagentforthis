@@ -58,7 +58,6 @@ export default function Navbar() {
               <Star className="h-4 w-4 mr-1" />
               Get Featured
             </Link>
-            {/*
             <Link 
               to="/admin" 
               className="flex items-center text-gray-200 hover:text-blue-400"
@@ -66,7 +65,6 @@ export default function Navbar() {
             >
               <Settings className="h-5 w-5" />
             </Link>
-              */}
           </div>
         </div>
       </div>
