@@ -15,7 +15,7 @@ export default function Navbar() {
             <Link to="/" className="flex items-center">
               <Brain className="h-8 w-8 text-blue-400" />
               <span className="ml-2 text-xl font-semibold text-white hidden sm:block">
-                AI Directory
+                Is There An AI Agent For This?
               </span>
             </Link>
           </div>
